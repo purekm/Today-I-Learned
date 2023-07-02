@@ -75,4 +75,4 @@ student[index].scoreKOR 처럼 사용하면 된다.
 
 Question. 하나의 struct안에 char name[20]을 선언했으면 student[0] 안에
 name이 20개씩 들어가는가? 
-
+Answer: student[index] 각각에 name[20]씩 들어가는게 맞다. 결론은 YES
