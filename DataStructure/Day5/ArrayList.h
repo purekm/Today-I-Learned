@@ -14,7 +14,7 @@ typedef struct __ArrayList{
 
 typedef ArrayList List;
 
-void ListInit(List *plist); //초기화
+void ListInit(List *plist); // 초기화
 void LInsert(List *plist, LData data); //데이터 저장
 int LFirst(List *plist, LData *pdata); //첫 데이터 참조
 int LNext(List *plist, LData *pdata); // 두 번째 이후 데이터 참조
