@@ -2,7 +2,7 @@
 #include "ArrayList.h"
 
 
-void ListInit(List *plist){ //초기화
+void ListInit(List *plist){ // 초기화
     (plist -> numOfData) = 0;
     (plist -> curPosition) = -1; //아무 대상도 가리키지 않음
 }
