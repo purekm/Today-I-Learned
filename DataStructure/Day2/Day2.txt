@@ -1,4 +1,4 @@
-malloc과 free함수를 통한 메모리관리{
+malloc과 free함수{
 
 동적할당 malloc 
 void* malloc(size_t size) 
