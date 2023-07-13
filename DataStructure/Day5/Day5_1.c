@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include<stdlib.h>
-#include "ArrayListp.h"
+#include "ArrayList.h"
 #include "Point.h"
 
 int main(void)
