@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "DLinkedList.h"
 
-void ListInit(List * plist){ // ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
-    plist -> head = (Node*)malloc(sizeof(Node)); // ë”ë¯¸ë…¸ë“œ ìƒì„±
+void ListInit(List * plist){ // ¸®½ºÆ® ÃÊ±âÈ­
+    plist -> head = (Node*)malloc(sizeof(Node)); // ´õ¹Ì³ëµå »ý¼º
     plist -> head -> next = NULL;
     plist -> comp = NULL;
     plist -> numOfData = 0;
@@ -12,35 +12,35 @@ void ListInit(List * plist){ // ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
 void FInsert(List *plist, LData data){
     Node *newNode = (Node*)malloc(sizeof(Node));
     newNode->data = data;
-    newNode->next = plist->head->next; // dummyì˜ next ìª½ì— ì¶”ê°€í•˜ëŠ” ë°©ì‹ 
+    newNode->next = plist->head->next; // dummyÀÇ next ÂÊ¿¡ Ãß°¡ÇÏ´Â ¹æ½Ä 
     plist->head->next = newNode;
     (plist->numOfData)++;
 }
 void SInsert(List *plist, LData data){
     Node *newNode = (Node*)malloc(sizeof(Node));
-    Node *pred = plist-> head; // ë”ë¯¸ë…¸ë“œë¥¼ ê°€ë¦¬í‚´
+    Node *pred = plist-> head; // ´õ¹Ì³ëµå¸¦ °¡¸®Å´
     newNode-> data = data;
     while(pred->next != NULL && plist->comp(data,pred-> next-> data)!=0){ 
-        //ì¡°ê±´1 predê°€ ë¦¬ìŠ¤íŠ¸ì˜ ë§ˆì§€ë§‰ ë…¸ë“œì¸ê°€?
-        //ì¡°ê±´2 ìƒˆ ë°ì´í„°ì™€ predì˜ ë‹¤ìŒ ë…¸ë“œì— ì €ìž¥ëœ ë°ì´í„°ì˜ ìš°ì„ ìˆœìœ„ ë¹„êµ
-        //compí•¨ìˆ˜ - dataê°€ ì •ë ¬ ìˆœì„œìƒ ì•žì„œì„œ headì— ê°€ê¹Œìš°ë©´ 0 ë°˜í™˜, ì•„ë‹ˆë©´ 1 ë°˜í™˜
+        //Á¶°Ç1 pred°¡ ¸®½ºÆ®ÀÇ ¸¶Áö¸· ³ëµåÀÎ°¡?
+        //Á¶°Ç2 »õ µ¥ÀÌÅÍ¿Í predÀÇ ´ÙÀ½ ³ëµå¿¡ ÀúÀåµÈ µ¥ÀÌÅÍÀÇ ¿ì¼±¼øÀ§ ºñ±³
+        //compÇÔ¼ö - data°¡ Á¤·Ä ¼ø¼­»ó ¾Õ¼­¼­ head¿¡ °¡±î¿ì¸é 0 ¹ÝÈ¯, ¾Æ´Ï¸é 1 ¹ÝÈ¯
         pred = pred-> next;
     }
-    newNode-> next = pred->next; // newNodeì˜ ì˜¤ë¥¸ìª½(next)ì—°ê²°
-    pred-> next = newNode; //newNodeì˜ ì™¼ìª½ ì—°ê²°
+    newNode-> next = pred->next; // newNodeÀÇ ¿À¸¥ÂÊ(next)¿¬°á
+    pred-> next = newNode; //newNodeÀÇ ¿ÞÂÊ ¿¬°á
     (plist->numOfData)++;
 }
 
 
 void LInsert(List *plist,LData data){
-    if(plist->comp = NULL){
+    if(plist->comp == NULL){
         FInsert(plist,data);
     }else{
         SInsert(plist,data);
     }
 }
 
-int LFirst(List *plist, LData *pdata){ //ë¦¬ìŠ¤íŠ¸ ì²«ë¶€ë¶„ì„ íƒìƒ‰í•˜ëŠ” ë°©ì‹
+int LFirst(List *plist, LData *pdata){ //¸®½ºÆ® Ã¹ºÎºÐÀ» Å½»öÇÏ´Â ¹æ½Ä
     if(plist->head->next == NULL){
         return FALSE;
     }
@@ -50,7 +50,7 @@ int LFirst(List *plist, LData *pdata){ //ë¦¬ìŠ¤íŠ¸ ì²«ë¶€ë¶„ì„ íƒìƒ‰í•˜ëŠ” ë°©
     return TRUE;
 }
 
-int LNext(List *plist, LData *pdata){ //ë¦¬ìŠ¤íŠ¸ ì²˜ìŒ ì´í›„ë¥¼ íƒìƒ‰í•˜ëŠ” ë°©ì‹
+int LNext(List *plist, LData *pdata){ //¸®½ºÆ® Ã³À½ ÀÌÈÄ¸¦ Å½»öÇÏ´Â ¹æ½Ä
     if(plist->cur->next == NULL){
         return FALSE;
     }
@@ -64,7 +64,7 @@ LData LRemove(List *plist){
     Node *rpos = plist-> cur;
     LData rdata = rpos -> data;
 
-    plist-> before-> next = plist->cur->next; // rpos->nextëŠ” ì•ˆë¼?
+    plist-> before-> next = plist->cur->next; // rpos->next´Â ¾ÈµÅ?
     plist->cur = plist->before;
     free(rpos);
     (plist->numOfData)--;

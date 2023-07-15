@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "DLinkedList.h"
 
-int WhoIsPrecede(int d1,int d2){ //ì •ë ¬ê¸°ì¤€
+int WhoIsPrecede(int d1,int d2){ //Á¤·Ä±âÁØ
     if(d1<d2) {
         return 0;
     }
@@ -12,17 +12,17 @@ int WhoIsPrecede(int d1,int d2){ //ì •ë ¬ê¸°ì¤€
 int main(void){
     List list;
     int data;
-    ListInit(&list); // ë¦¬ìŠ¤íŠ¸ ìƒì„± ë° ì´ˆê¸°í™”
-    printf("í˜„ìž¬ ë°ì´í„°ì˜ ìˆ˜: %d \n",LCount(&list));
-    /*SetSortRule(&list,WhoIsPrecede); //ì •ë ¬ê¸°ì¤€ ë“±ë¡
+    ListInit(&list); // ¸®½ºÆ® »ý¼º ¹× ÃÊ±âÈ­
+    
+    SetSortRule(&list,WhoIsPrecede); //Á¤·Ä±âÁØ µî·Ï
 
-    LInsert(&list,11); // ë°ì´í„° 5ê°œ ì €ìž¥
+    LInsert(&list,11); // µ¥ÀÌÅÍ 5°³ ÀúÀå
     LInsert(&list,11);
     LInsert(&list,22);
     LInsert(&list,22);
     LInsert(&list,33);
     
-    printf("í˜„ìž¬ ë°ì´í„°ì˜ ìˆ˜: %d \n",LCount(&list));
+    printf("ÇöÀç µ¥ÀÌÅÍÀÇ ¼ö: %d \n",LCount(&list));
 
     if(LFirst(&list,&data)){
         printf("%d ", data);
@@ -32,7 +32,7 @@ int main(void){
     }
     printf("\n\n");
 
-    //ìˆ«ìž 22ê²€ìƒ‰ í›„ ì‚­ì œ
+    //¼ýÀÚ 22°Ë»ö ÈÄ »èÁ¦
     if(LFirst(&list,&data)){
         if(data == 22){
             LRemove(&list);
@@ -44,8 +44,8 @@ int main(void){
         }
     }
 
-    //ì‚­ì œ í›„ ë‚¨ì€ ë°ì´í„° ì¶œë ¥
-    printf("í˜„ìž¬ ë°ì´í„°ì˜ ìˆ˜: %d \n",LCount(&list));
+    //»èÁ¦ ÈÄ ³²Àº µ¥ÀÌÅÍ Ãâ·Â
+    printf("ÇöÀç µ¥ÀÌÅÍÀÇ ¼ö: %d \n",LCount(&list));
 
     if(LFirst(&list,&data)){
         printf("%d ",data);
@@ -53,7 +53,7 @@ int main(void){
              printf("%d ",data);
         }
     }
-    */
+    
     printf("\n\n");
     return 0;
 }
