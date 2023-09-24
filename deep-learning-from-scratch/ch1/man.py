@@ -6,4 +6,3 @@ class Man:
     def hello(self):
         print("Hello "+self.name)
 m = Man("Kyeongmin")
-m.hello()
