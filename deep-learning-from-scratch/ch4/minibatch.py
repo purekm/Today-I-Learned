@@ -8,8 +8,8 @@ t= [0,0,1,0,0,0,0,0,0,0]
 (x_train,t_train),(x_test,t_test) = \
     load_mnist(normalize=True,one_hot_label=True)
     
-print(x_train.shape)
-print(t_train.shape)
+# print(x_train.shape)
+# print(t_train.shape)
 
 # train_size = x_train.shape[0]
 # batch_size = 10
@@ -34,4 +34,4 @@ def cross_entropy_error2(y,t):
     return -np.sum(np.log(y[np.arrange(batch_size),t]+1e-7)) / batch_size 
 #정답레이블이 숫자 레이블로 주어졌을 떄
 
-print(cross_entropy_error(np.array(y),np.array(t)))
+# print(cross_entropy_error(np.array(y),np.array(t)))

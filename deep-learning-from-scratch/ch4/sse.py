@@ -13,7 +13,7 @@ def cross_entropy_error(y,t):
     delta = 1e-7
     return -np.sum(t*np.log(y+delta))
 
-print(cross_entropy_error(np.array(y),np.array(t))); 
+# print(cross_entropy_error(np.array(y),np.array(t))); 
 #교차 엔트로피
 
 
