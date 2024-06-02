@@ -30,7 +30,6 @@ int main(){
         finish = vec[i].second;
     }else continue;
    }
-    // cout << start << " " << finish;
     sum += finish-start;
     cout << sum;
     return 0;
