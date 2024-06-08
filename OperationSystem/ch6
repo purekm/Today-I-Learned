@@ -26,7 +26,8 @@ Synchronization Hardware
 1. 메모리 배리어
     strongly ordered - 프로세서의 메모리 수정이 즉시 다른 프로세서에게 보임
     weakly ordered - 메모리 수정이 다른 프로세서에게 즉시 보이지 않음
-    
+
+
 2. 하드웨어 명령어
 3. atomic 변수
 
