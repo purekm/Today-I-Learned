@@ -10,11 +10,6 @@ int snack[1000001];
 
 
 int main(){
-    cin.tie(nullptr);
-    ios::sync_with_stdio(false);
-    int m,n;
-    cin >> m >> n;
-    for(int i=0;i<n;i++) cin >> snack[i];
-    for(int i=0;i<n;i++) cout << snack[i];
+    cout << "Hello";
     return 0;
 }
