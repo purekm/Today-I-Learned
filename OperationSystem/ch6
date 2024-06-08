@@ -27,8 +27,45 @@ Synchronization Hardware
     strongly ordered - 프로세서의 메모리 수정이 즉시 다른 프로세서에게 보임
     weakly ordered - 메모리 수정이 다른 프로세서에게 즉시 보이지 않음
 
+    while(!flag)
+        memory_barrier();
+    print x
+
+    위의 경우에는 x값이 로딩되기 전에 flag 값이 먼저 로딩되는 것을 보장함 
+    very low-level 이므로, 커널 개발자가 특별하게 상호 배타하는 경우만 사용
 
 2. 하드웨어 명령어
-3. atomic 변수
+    Test-and-Set
+        while(test_and_set(&lock))
+            리턴 값이 true면 cs에 다른 프로세스가 있다는 의미
+            리턴 값이 false면 cs에 아무도 없다는 의미
+                lock이 false면 cs에 들어가고 true로 바꿔 줌으로써 다른 프로세스가 cs에 들어오지 못하게 함
+        while문에서 lock 획득을 계속 시도하고 있으므로 spin-lock
+        spin-lock - lock을 얻기 위해 CPU 소모를 계속 하는 상태
 
+    Compare-and-Swap
+        while (compare_and_swap(&lock, expected, new_value) != 0)
+            lock값과 expected의 값이 같으면 lock의 값을 new로 변경
+            둘의 값이 다르면 변화 없음
+            항상 lock의 original 값을 return
+        while (compare_and_swap(&lock, 0, 1) != 0)
+            처음엔 lock이 0이였다가, 한번 실행하면 lock이 1로 바껴서 대기상태로 바뀐다.
+            처음에 실행되었던 프로세스가 lock 풀어주면 lock이 0으로 바껴서 다음 프로세스가 실행된다.
+            lock 획득을 계속 시도하고 있기 때문에 spin-lock
+            의미적으로 test-and-set과 동일
+
+    Comapre-and-Exchange
+        while (!compare_and_exchange(&lock, &expected, new_value))
+            lock 값이 expected값과 일치하면 new_value로 바꾸고 return true
+            일치하지 않으면 expected 값을 lock 값으로 바꾸고 return false
+        while (!compare_and_exchange(&lock, &expected, 1)) 
+            의미적으로 test_and_set과 동일하며, spin-lock 방식이다.
+        
+        waiting queue를 이용한 peterson 방식을 compare_and_swap 과 함께 사용하면
+        CS에 순차적으로 들어가는 알고리즘 구현 가능
+
+        
+    
+3. atomic 변수
+    
 
