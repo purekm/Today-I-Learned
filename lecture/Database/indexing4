@@ -41,6 +41,7 @@ Hash Collision – 다른 search-key value에 Hash function을 적용했을 때 
 Bucket Overflow – 중복된 entry가 있을 수 있고, distribution이 적은 수의 bucket에 집중되어 있으면 overflow 발생가능 -> overflow bucket을 만들어서 거기에 저장
 Bucket overflow를 줄일 순 있지만  제거하는 것은 불가능
 Overflow chaining을 사용하는 경우 closed addressing이라고 부른다.
+![텍스트]("C:\Users\TUF FOR NOT GAMING\Desktop\그림1.png")
  
 Static Hashing 에서는 bucket의 숫자를 적절히 정해야함
 One solution – Static Hashing을 주기적으로 rebuilding을 해준다.
