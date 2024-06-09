@@ -37,6 +37,7 @@ Synchronization Hardware
 2. 하드웨어 명령어
     Test-and-Set
         while(test_and_set(&lock))
+            lock 값을 true로 만들어주고 설정 전 lock 값을 리턴
             리턴 값이 true면 cs에 다른 프로세스가 있다는 의미
             리턴 값이 false면 cs에 아무도 없다는 의미
                 lock이 false면 cs에 들어가고 true로 바꿔 줌으로써 다른 프로세스가 cs에 들어오지 못하게 함
@@ -87,8 +88,11 @@ Synchronization Hardware
     Strong 버전은 거짓이 없으나 느리다. IF문 안에서 사용함.
 
 mutex
-this solution require busy waiting = spinlock
-lock을 얻고, 해제하는 방식 
+lock을 얻고, 해제하는 방식
+mutex의 acquire()과 release는 원자적으로 구현할 때 주로 atomic_instructions에서 compare-and-swap을 사용
+compare-and-swap은 busy waiting방식이므로, spin-lock이라 불림
+spinlock은 CPU를 소모하지만 context switching이 필요없어서 유리한 면이 있음.
+lock을 걸고 있는 시간이 두 개의 context switching 시간보다 작으면 spinlock이 유리함.
 
 Semaphore
 mutex의 정교한 버전
@@ -102,14 +106,15 @@ Binary semaphore은 mutex lock과 같음
 
 Busy waiting 이 없는 semaphore
 block 연산을 통해 호출한 프로세스를 대기 큐에 배치한다.
-wakeup 대기 큐에서 하나의 프로세스를 제거하고 준비 큐에 배치한다.
+wakeup 대기 큐에서 하나의 프로세스를 제거하고 레디 큐에 배치한다.
+
 단일 CPU 버전
 wait(S){
     disable interrupts
     S->value--;
     if(S->value<0){
         add this process to S->list;
-        block();
+        block(); //호출한 프로세스를 대기 큐에 배치
     }
     enable interrupts
 }
@@ -119,13 +124,40 @@ signal(S){
     S->value++;
     if(S->value<=0){
         remove a process P from S->list;
-        wakeup(P);
+        wakeup(P); //대기 큐에 있던 프로세스 중 하나인 P를 제거하고, 레디 큐에 넣음
     }
     enable interrupts
 }
 단일 CPU 버전에서는 interrupts를 비활성화하여 원자성 구현
 하지만 다중 코어에서 인터럽트로 전부 막는 것은 비효율적
 -> 스핀락을 통해 상호 배타성 보장
+
+다중 CPU버전
+wait(S){
+    while(test_and_set(&mutex)){
+        ;
+    }
+    S->value--;
+    if(S->value<0){
+        add this process to S->list;
+        mutex = false;
+        block(); //호출한 프로세스를 대기 큐에 배치
+    }else 
+        mutex = false;
+}
+
+signal(S){
+    while(test_and_set(&mutex)){
+        ;
+    }
+    S->value++;
+    if(S->value<=0){
+        remove a process P from S->list;
+        mutex = false;
+        wakeup(P); //대기 큐에 있던 프로세스 중 하나인 P를 제거하고, 레디 큐에 넣음
+    }else 
+        mutex = false;
+}
 
 Conditional variable 조건 변수
 wait() 조건 변수가 signal을 받을 때까지 대기
@@ -143,6 +175,10 @@ monitor
 추상 데이터 타입으로, 내부 변수는 절차 내의 코드에 의해서만 접할 수 있다.
 모니터 내에서는 하나의 프로세스만 활성 상태일 수 있다.
 실행 중인 프로세스가 더 이상 진행할 수 없으면 조건 변수를 사용하여 스스로 suspend할 수 있다.
+외부에서 모니터 함수를 사용하여 접근 가능
+
+모니터안에서 프로세스를 병렬으로 실행시키고 싶으면, 조건 변수에 wait()를 실행함으로써 가능
+wait()를 원하는 지점에 사용함으로써 preemption 위치를 스스로 정할 수 있다.
 
 monitor ExampleMonitor {
   // 공유 변수 선언
@@ -185,6 +221,39 @@ monitor ResourceAllocator
         busy = false; 
         }
     }
+
+Signal and wait - P는 Q가 모니터를 떠날 때까지나 다른 조건을 기다리고 있을 때까지 wait한다.
+function F ( . . . ) 모니터함수 
+{
+    wait(mutex); 상호배타 확보
+    ...
+    body of F
+    ...
+    if (next_count > 0)
+        signal(next);
+    else
+        signal(mutex);
+} 
+x.wait()
+{
+    x.count++; 
+    if (next_count > 0)
+        signal(next);
+    else
+        signal(mutex);
+    wait(x.sem); x가 signal을 받을 때 까지 대기
+    x.count--; 
+}
+x.signal()
+{
+    if (x.count > 0) { 조건 변수를 기다리는 프로세스가 있다면
+        next_count++; 
+        signal(x.sem); 조건 변수 x를 깨워줌
+        wait(next); 깨워준 x를 next
+        next_count--;
+    }
+}
+
 
 Liveness
 시스템이 특정 조건을 만족하면서 프로세스들이 무한정 기다리지 않고, 적절히 진행될 수 있도록 보장하는 속성
