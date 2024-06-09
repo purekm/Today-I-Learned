@@ -87,8 +87,11 @@ Synchronization Hardware
     Strong 버전은 거짓이 없으나 느리다. IF문 안에서 사용함.
 
 mutex
-this solution require busy waiting = spinlock
-lock을 얻고, 해제하는 방식 
+lock을 얻고, 해제하는 방식
+mutex의 acquire()과 release는 원자적으로 구현할 때 주로 atomic_instructions에서 compare-and-swap을 사용
+compare-and-swap은 busy waiting방식이므로, spin-lock이라 불림
+spinlock은 CPU를 소모하지만 context switching이 필요없어서 유리한 면이 있음.
+lock을 걸고 있는 시간이 두 개의 context switching 시간보다 작으면 spinlock이 유리함.
 
 Semaphore
 mutex의 정교한 버전
@@ -102,14 +105,15 @@ Binary semaphore은 mutex lock과 같음
 
 Busy waiting 이 없는 semaphore
 block 연산을 통해 호출한 프로세스를 대기 큐에 배치한다.
-wakeup 대기 큐에서 하나의 프로세스를 제거하고 준비 큐에 배치한다.
+wakeup 대기 큐에서 하나의 프로세스를 제거하고 레디 큐에 배치한다.
+
 단일 CPU 버전
 wait(S){
     disable interrupts
     S->value--;
     if(S->value<0){
         add this process to S->list;
-        block();
+        block(); //호출한 프로세스를 대기 큐에 배치
     }
     enable interrupts
 }
@@ -119,13 +123,16 @@ signal(S){
     S->value++;
     if(S->value<=0){
         remove a process P from S->list;
-        wakeup(P);
+        wakeup(P); //대기 큐에 있던 프로세스 중 하나인 P를 제거하고, 레디 큐에 넣음
     }
     enable interrupts
 }
 단일 CPU 버전에서는 interrupts를 비활성화하여 원자성 구현
 하지만 다중 코어에서 인터럽트로 전부 막는 것은 비효율적
 -> 스핀락을 통해 상호 배타성 보장
+다중 CPU버전
+wait(S){
+}
 
 Conditional variable 조건 변수
 wait() 조건 변수가 signal을 받을 때까지 대기
