@@ -1,27 +1,29 @@
 Synchronization Examples <br/>
-1.bounded-buffer<br/>
+
+1. bounded-buffer<br/>
     counter 변수 없이 mutex만으로는 해결 불가능<br/>
     Counting semaphore 인 full,empty를 사용하는게 효율적<br/>
     생산자와 소비자가 별도의 mutex를 사용하는게 효율적<br/>
 
-2.readers-writers<br/>
+2. readers-writers<br/>
     여러 reader가 읽을 수 있고, writer는 혼자만 cs에 들어갈 수 있음<br/>
     공유 데이터<br/>
-        data set<br/>
-        reader와 writer 상호배타용 mutex<br/>
-        reader의 reader_count 를 업데이트하기 위한 mutex<br/>
-        read_count - 현재 진행 중인 reader<br/>
+   1. data set<br/>
+   2. reader와 writer 상호배타용 mutex<br/>
+   3. reader의 reader_count 를 업데이트하기 위한 mutex<br/>
+   4. read_count - 현재 진행 중인 reader<br/>
+   
     reader 선호 알고리즘 - 대기하고 있는 reader와 writer가 있으면, reader가 우선적으로 실행<br/>
     writer 선호 알고리즘 - 대기하고 있는 writer와 reader가 있으면, writer가 우선적으로 실행<br/>
-    공정한 reader<br/>
-
-3.dining philosophers <br/>
+    공정한 reader-writer - 대기하고 있는 reader - writer가 들어온 순서대로 실행<br/>
+    
+4. dining philosophers <br/> 
     deadlock 을 피하는 3가지 방법<br/>
-    1.테이블에 최대 4명이 앉는다.<br/>
+    1. 테이블에 최대 4명이 앉는다.<br/>
         한명은 항상 젓가락을 양쪽 다 잡을 수 있음<br/>
-    2.젓가락을 둘 다 잡을 수 있을 때만 잡는다.<br/>
+    2. 젓가락을 둘 다 잡을 수 있을 때만 잡는다.<br/>
         모두 잡을 수 있을 때만 잡고, 아니면 다시 젓가락을 놓음<br/>
-    3.짝수번 철학자는 왼쪽,오른쪽 순서로 젓가락을 잡고, 홀수번 철학자는 반대 순서로 잡는다.
+    3. 짝수번 철학자는 왼쪽,오른쪽 순서로 젓가락을 잡고, 홀수번 철학자는 반대 순서로 잡는다.
         순서가 충돌하지 않음<br/>
 
 Kernel level 동기화 메커니즘<br/>
@@ -35,7 +37,7 @@ Kernel level 동기화 메커니즘<br/>
     spinlock을 사용하면 짧은 시간 동안 busy-waiting을 유지하며 자원을 기다림<br/>
     작업이 짧을 때 효과적<br/>
 
-3.Dispatcher object (User level 동기화 메커니즘이기도 함)<br/>
+3. Dispatcher object (User level 동기화 메커니즘이기도 함)<br/>
     mutex, semaphore, Event, Timer 등의 역할을 할 수 있음<br/>
     Event - 어떤 조건을 만족하면 기다리던 스레드에게 notify()<br/>
         조건 변수와 유사함<br/>
@@ -71,18 +73,18 @@ Atomic variable<br/>
 여러 스레드가 동시에 접근할 때도 안전하게 사용될 수 있는 변수<br/>
 동기화 없이도 여러 스레드에서 안전하게 읽고 쓸 수 있도록 설계되어 있음<br/>
 
-atomic_init(&a,0): 원자적 변수 초기화<br/>
-int value = atomic_load(&a): 원자적 변수 값 읽기<br/>
-atomic_store(&a,20): 원자적 변수에 값을 저장<br/>
-int old_value = atomic_exchange(&a,15): 원자적 변수의 값 교환,바뀌기 전 값을 return <br/>
-if(atomic_compare_exchange_strong(&a,&expected,desired))<br/>
-    a와 expected가 같으면 return true 후 desired과 값 변경<br/>
-    a와 expected가 다르면 return false 후 expected에 object의 값이 저장 됨<br/>
-while(atomic_compare_exchange_weak(&a,&expected,desired))<br/>
-    strong과 같은 효과지만, 가끔 틀린 결과가 나올 수 있어서 while문에 넣어서 계속 확인<br/>
- int old_value = atomic_fetch_add(&a, 10): a에 값을 더함<br/>
- int old_value = atomic_fetch_sub(&a, 5) : a에 값을 뺌<br/>
- int old_value = atomic_fetch_and(&a, 0b1010) : a와 and 연산 0b는 이진수를 나타냄<br/>
+    atomic_init(&a,0): 원자적 변수 초기화<br/>
+    int value = atomic_load(&a): 원자적 변수 값 읽기<br/>
+    atomic_store(&a,20): 원자적 변수에 값을 저장<br/>
+    int old_value = atomic_exchange(&a,15): 원자적 변수의 값 교환,바뀌기 전 값을 return <br/>
+    if(atomic_compare_exchange_strong(&a,&expected,desired))<br/>
+        a와 expected가 같으면 return true 후 desired과 값 변경<br/>
+        a와 expected가 다르면 return false 후 expected에 object의 값이 저장 됨<br/>
+    while(atomic_compare_exchange_weak(&a,&expected,desired))<br/>
+        strong과 같은 효과지만, 가끔 틀린 결과가 나올 수 있어서 while문에 넣어서 계속 확인<br/>
+     int old_value = atomic_fetch_add(&a, 10): a에 값을 더함<br/>
+     int old_value = atomic_fetch_sub(&a, 5) : a에 값을 뺌<br/>
+     int old_value = atomic_fetch_and(&a, 0b1010) : a와 and 연산 0b는 이진수를 나타냄<br/>
 
 POSIX 동기화 도구 <br/>
     mutex<br/>
@@ -123,7 +125,8 @@ UNIX,Linux,macOS에서 널리 사용됨
         int pthread_cond_timedwait(pthread_cond_t *restrict cond, pthread_mutex_t *restrict mutex, const struct timespec *restrict abstime); //지정된 시간까지 기다리고 시간 초과되면 실패<br/>
         int pthread_cond_signal(pthread_cond_t *cond); 대기 중인 스레드 중 하나를 깨움<br/>
         int pthread_cond_broadcast(pthread_cond_t *cond); // 대기 중인 모든 스레드를 깨움<br/>
-    조건 변수는 while문을 통해서 조건을 다시 검사하는 것이 매우 중요하다.<br/>
+        
+조건 변수는 while문을 통해서 조건을 다시 검사하는 것이 매우 중요하다.<br/>
         cond_wait()에서 mutex_lock을  풀기 때문에, 리턴되었을 때 a나b의 값이 변경되어 있을 수 있기 때문이다.<br/>
     
 
