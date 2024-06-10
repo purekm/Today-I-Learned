@@ -39,5 +39,28 @@ T4에서도 B에 대한 S-lock을 획득하려고 하는데, T3에서 X-lock을 
 ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/81410e45-d3e2-400e-b1ca-1209a911492a)<br/>
 위와 마찬가지로 Deadlock 발생<br/>
 
+Locking Protocol<br/>
+-
+모든 트랜잭션이 lock 요청 및 해제 시 따르는 규칙의 집합<br/>
+1. 트랜잭션이 각 data item을 언제 잠그고 해제할 수 있는지 나타냄<br/>
 
+가능한 스케줄을 제한 함<br/>
+1. locking protocol에 의해 시행되는 모든 가능한 스케줄 -> serializable<br/>
+2. 일부 locking protocol은 conflict - serializable schedule만 허용<br/>
+
+대부분의 locking protocol 에서는 deadlock이 발생할 가능성이 있음<br/>
+1. 나쁘지만 inconsistent보단 나음<br/>
+
+Starvation<br/>
+-
+예시
+1. T1이 Q에 대한 X-lock을 보유 시도
+2. T2가 이미 Q의 S-lock 보유중
+3. T2가 S-lock 해제 전 T3가 Q에 대해 S-lock 요청 -> 즉시 부여
+4. T1은 T2,T3 둘다 기다려야함
+
+이런 순서가 반복되면 T1은 lock을 못 얻고 기아상태에 빠짐
+
+solution - 다른 트랜잭션이 lock을 기다리지 않을 때만 lock을 부여
+T3는 T1이 lock을 사용할 때 까지 기다림. T1이 먼저 lock을 기다리고 있었으니까?
 
