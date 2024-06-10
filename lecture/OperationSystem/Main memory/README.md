@@ -104,7 +104,7 @@ Worst-fit – 가장 큰 hole에 할당<br/>
 
 First-fit이 일반적으로 가장 빠름 Why?? -> 탐색 시간이 짧고, 복잡한 정렬 과정이 필요 없기 때문에 빠름<br/>
 
-Fragmentatiton <br/>
+Fragmentation <br/>
 -
 Externel Fragmentation - 전체 메모리 공간에 충분한 여유 공간이 필요하지만, 그 공간이 연속적이지 않은 경우 <br/>
 1. 충분한 메모리 공간이 있음에도 요청을 만족시키지 못하는 경우 발생<br/>
