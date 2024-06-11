@@ -1,4 +1,4 @@
-8장 Dead Lock <br/>
+8장 Dead Lock <br/> 미 검토 상태
 Deadlock의 특성 및 필요조건<br/>
 Mutual exclusion  - 적어도 하나의 자원이 공유 불가 때문에 deadlock<br/>
 Hold and wait – 뭔가를 잡고 대기중 <br/>
