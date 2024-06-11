@@ -2,89 +2,139 @@
 
 가상 메모리
 -
-1. 전체 프로그램이 다 필요하진 않으므로, 일부분만 사용
-2. 일부만 로딩하니까 memory의 한계에 제약 받지 않음
-3. I/O가 작아서 빠르게 돌아감
-4. 논리적인 메모리를 물리적인 메모리보다 많이 할당 가능
-5. 공유가 쉬움
-6. 프로세스 생성이 효율적
-7. 동시에 돌리기 가능하고, I/O가 적게 필요
+1. 전체 프로그램이 다 필요하진 않으므로, 일부분만 사용 <br/>
+2. 일부만 로딩하니까 memory의 한계에 제약 받지 않음 <br/>
+3. I/O가 작아서 빠르게 돌아감 <br/>
+4. 논리적인 메모리를 물리적인 메모리보다 많이 할당 가능 <br/>
+5. 공유가 쉬움 <br/>
+6. 프로세스 생성이 효율적 <br/>
+7. 동시에 돌리기 가능하고, I/O가 적게 필요 <br/>
 
-가상의 주소라서 0번부터 끝까지 사용 가능
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/f5088fdf-0830-4996-aca3-659cb46a4cf0)
+가상의 주소라서 0번부터 끝까지 사용 가능 <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/f5088fdf-0830-4996-aca3-659cb46a4cf0) <br/>
 
-hole에 공유 library or 공유 메모리가 들어감
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1b19da50-5c11-4c1e-98b5-bb20be8cef45)
+hole에 공유 library or 공유 메모리가 들어감 <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1b19da50-5c11-4c1e-98b5-bb20be8cef45) <br/>
 
-Demand paging - 필요한 페이지만 가져오는 것
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c9cb3485-0898-4b04-8c1e-993179a888d1)
+Demand paging - 필요한 페이지만 가져오는 것 <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c9cb3485-0898-4b04-8c1e-993179a888d1) <br/>
 
-주소 변환 과정에서 Invalid bit가 i로 설정되어 있으면 page fault가 발생
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/5beb0f30-3c41-4e0c-bc16-c4c32de8205d)
+주소 변환 과정에서 Invalid bit가 i로 설정되어 있으면 page fault가 발생 <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/5beb0f30-3c41-4e0c-bc16-c4c32de8205d) <br/>
 
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/71af5be2-d6d9-452e-b08e-aafee0205233)
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/71af5be2-d6d9-452e-b08e-aafee0205233) <br/>
 
-Steps in Handling Page Fault
+Steps in Handling Page Fault <br/>
 -
-1. 페이지 참조
-   1. 만약 프로세스가 특정 페이지를 참조하고, 그 페이지가 현재 메모리에 없을 경우 해당 참조는 os에 의해 trap으로 처리
-2. 운영 체제의 결정
-   1. 운영체제는 페이지 참조가 유효한지 판단
-   2. 주소 범위 밖을 참조하면, 프로세스를 중단
-   3. 페이지가 메모리에 없는 경우, 페이지 fault 처리를 진행
-3. free frame 찾기
-4. 페이지 swap
-5. 테이블 update
-6. 명령어 재시작
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c3bec95d-2542-4ddd-89b0-6a4aa163e59f)
+1. 페이지 참조 <br/>
+   1. 만약 프로세스가 특정 페이지를 참조하고, 그 페이지가 현재 메모리에 없을 경우 해당 참조는 os에 의해 trap으로 처리 <br/>
+2. 운영 체제의 결정 <br/>
+   1. 운영체제는 페이지 참조가 유효한지 판단 <br/>
+   2. 주소 범위 밖을 참조하면, 프로세스를 중단 <br/>
+   3. 페이지가 메모리에 없는 경우, 페이지 fault 처리를 진행 <br/>
+3. free frame 찾기 <br/>
+4. 페이지 swap <br/>
+5. 테이블 update <br/>
+6. 명령어 재시작 <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c3bec95d-2542-4ddd-89b0-6a4aa163e59f) <br/>
 
-1번 진행하려고 하는데 M이 page memory에 없네??
-1번 page table에서 찾으려는데 invalid 하므로 interrupt를 발생시켜 제어권을 os에게 넘김
-2번까지는 user mode이고, 이후에는 kernel 모드
-3번에서 backing store로 가서 빈 frame 자리 찾고, (4번) backing store에서 페이지를 가져온 후, 빈 frame에다가 넣음
-5번에서는 옮겨온 페이지의 frame 번호를 page table에 저장하고, 업데이트
-6번에서 마지막으로 restart instruction
+1번 진행하려고 하는데 M이 page memory에 없네?? <br/>
+1번 page table에서 찾으려는데 invalid 하므로 interrupt를 발생시켜 제어권을 os에게 넘김 <br/>
+2번까지는 user mode이고, 이후에는 kernel 모드 <br/>
+3번에서 backing store로 가서 빈 frame 자리 찾고, (4번) backing store에서 페이지를 가져온 후, 빈 frame에다가 넣음 <br/>
+5번에서는 옮겨온 페이지의 frame 번호를 page table에 저장하고, 업데이트 <br/>
+6번에서 마지막으로 restart instruction <br/>
 
-4번 과정이 진행될 때, 디스크는 매우 느리기 때문에 context switching이 되어서 다른 process가 일하고 있음
-I/O가 끝나면 ready queue에 넣어주고나서 자기 차례가 되면 실행
-이후에 원래 interrupt가 걸린 곳으로 돌아온다.
+4번 과정이 진행될 때, 디스크는 매우 느리기 때문에 context switching이 되어서 다른 process가 일하고 있음 <br/>
+I/O가 끝나면 ready queue에 넣어주고나서 자기 차례가 되면 실행 <br/>
+이후에 원래 interrupt가 걸린 곳으로 돌아온다. <br/>
 
-Major page fault - 페이지가 메모리에 없는 경우 발생
-Minor page fault - 페이지가 메모리에 있지만 매핑이 안 되어 있는 경우(공유 라이브러리), 또는 원하는 페이지가 free-frame 리스트에 아직 남아 있는 경우 발생
+Major page fault - 페이지가 메모리에 없는 경우 발생 <br/>
+Minor page fault - 페이지가 메모리에 있지만 매핑이 안 되어 있는 경우(공유 라이브러리), 또는 원하는 페이지가 free-frame 리스트에 아직 남아 있는 경우 발생 <br/>
 
-pure demand paging - 시작할 때 아무런 페이지가 없으니까 fault가 자주 발생
--> prepaging으로 메모리에 일부를 미리 로딩시킴(드물지만 한 명령어에 4번의 fault 발생 가능)
+pure demand paging - 시작할 때 아무런 페이지가 없으니까 fault가 자주 발생 <br/>
+-> prepaging으로 메모리에 일부를 미리 로딩시킴(드물지만 한 명령어에 4번의 fault 발생 가능) <br/>
 
-Demand paging 하려면 Hardware support 필요
-1. Page table with valid/invalid bit
-2. Secondary memory (swap space)
-3. instruction restart
+Demand paging 하려면 Hardware support 필요 <br/>
+1. Page table with valid/invalid bit <br/>
+2. Secondary memory (swap space) <br/>
+3. instruction restart <br/>
 
-Instruction restart
+Instruction restart <br/>
 -
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c28bde13-d772-4d6e-8b97-7a5df8cb26df)
-이런 경우에는 fault가 일어났을 때 restart해도 문제가 생김(원본이 깨짐)
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c28bde13-d772-4d6e-8b97-7a5df8cb26df) <br/>
+이런 경우에는 fault가 일어났을 때 restart해도 문제가 생김(원본이 깨짐) <br/>
 
 Solution
-1. 페이지 fault가 일어나기 전에 미리 페이지를 불러들이고 명령어를 실행
-2. 임시 레지스터에 겹치는 부분을 저장했다가 page fault 발생 시 restore
+1. 페이지 fault가 일어나기 전에 미리 페이지를 불러들이고 명령어를 실행 <br/>
+2. 임시 레지스터에 겹치는 부분을 저장했다가 page fault 발생 시 restore <br/>
 
-Page fault 상세 과정
+Page fault 상세 과정 <br/>
 -
-1. Trap to OS
-2. Interrupt가 발생했으므로, register와 state를 저장하고 감
-3. Interrupt의 원인이 page fault인지 확인
-4. 페이지 조회가 유효한지 확인하고, 디스크에서 해당 페이지의 위치를 파악
-5. 메모리에서 빈 공간을 찾아서 메모리로 읽어 옴
-   1. request가 발생하면, disk에 request queue에 들어가서 조금 있다가 실행됨(디스크 내부에서 순서가 나름 최적화됌)
-   2. device 탐색 및 대기 시간 발생
-6. 5번을 기다리는 동안, CPU는 다른 프로세스에게 넘어감
-7. I/O가 종료되면 interrupt가 걸려서 실행 중인 프로세스를 중단시킴
-8. 따로 실행되었던 프로세스의 레지스터와 상태를 저장하고 종료됨
-9. Interrupt가 디스크의 request였는지 확인
-10. Page table 정리
-11. Process가 ready queue에 넣어지고, 스케줄러에 CPU제어권을 넘겨줬으므로 CPU할당을 기다림
-12. Interrupt를 받았던 장소로 돌아와서 저장했던 register와 state 복구
+1. Trap to OS <br/>
+2. Interrupt가 발생했으므로, register와 state를 저장하고 감 <br/>
+3. Interrupt의 원인이 page fault인지 확인 <br/>
+4. 페이지 조회가 유효한지 확인하고, 디스크에서 해당 페이지의 위치를 파악 <br/>
+5. 메모리에서 빈 공간을 찾아서 메모리로 읽어 옴 <br/>
+   1. request가 발생하면, disk에 request queue에 들어가서 조금 있다가 실행됨(디스크 내부에서 순서가 나름 최적화됌) <br/>
+   2. device 탐색 및 대기 시간 발생 <br/>
+6. 5번을 기다리는 동안, CPU는 다른 프로세스에게 넘어감 <br/>
+7. I/O가 종료되면 interrupt가 걸려서 실행 중인 프로세스를 중단시킴 <br/>
+8. 따로 실행되었던 프로세스의 레지스터와 상태를 저장하고 종료됨 <br/>
+9. Interrupt가 디스크의 request였는지 확인 <br/>
+10. Page table 정리 <br/>
+11. Process가 ready queue에 넣어지고, 스케줄러에 CPU제어권을 넘겨줬으므로 CPU할당을 기다림 <br/>
+12. Interrupt를 받았던 장소로 돌아와서 저장했던 register와 state 복구 <br/>
+
+Free Frame list <br/>
+-
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b81d10da-d407-403e-a16b-cfbf585fbbbb) <br/>
+Free frame을 사용할 때, 안에 있는 데이터를 지우고 줌(zero-fill-on-demand) <br/>
+어느정도 임계치(꽉 채우지 않음)까지 찬다면, 채워져 있던 칸을 빼앗아옴 <br/>
+만약 뺐어왔는데 변경했다면(dirty bit) 변경한 내용을 backing store에 저장하고 free frame list로 옮김 <br/>
+
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/32e1a461-4c2f-45dd-99fe-74508b4573a8) <br/>
+변경된 애들을 저장하는 modified frame list에 모아두고, 나중에 쓰게되면 free-frame list로 옮김 <br/>
+
+Backing store에 데이터를 저장하는 것은 비용이 많이 듦 <br/>
+1. Free frame에서 하나를 가져와서 modified frame에 있는 애들을 압축해서 넣음 <br/>
+2. 압축해서 free frame에 저장했으니까, 저장한 애들은 free-frame list에 올려도 되고 굳이 backing store에 저장할 필요 없음 <br/>
+
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/36fe4943-b605-48ce-95d2-9ba80335dc37) <br/>
+7번은 free frame list에서 빠졌지만, 압축한 3개가 free frame list로 옮겨짐 <br/>
+Android와 IOS에서는 swapping이나 paging을 쓰지 않고 memory compression을 사용 <br/>
+
+Performance of Demand Paging <br/>
+-
+Three major activities <br/>
+1. Service the interrupt <br/>
+2. Read the page <br/>
+3. Restart the process <br/>
+
+Page Fault rate 0<=p<=1 <br/>
+if p = 0 -> no page fault <br/>
+if p = 1 -> all fault <br/>
+
+Effective Access Time(EAT) <br/>
+EAT = (1-p)*memory access + p(page fault overhead + swap page out + swap page in) <br/>
+
+Example <br/>
+Memory access time = 200ns, average page fault service time = 8ms = 8000000ns <br/>
+EAT = (1-p)*200+p*8000000ns = 200+p*7999800 -> EAT 는 p에 비례 <br/>
+
+Demand Paging Optimization <br/>
+-
+Swap 공간은 파일 시스템보다 빠르기 때문에 swap space 사용 <br/>
+변하지 않는 binary 이미지는 파일 시스템에 읽어오고, 프로그램 실행하면 새로운 정보들이 생기는데 <br/>
+이런 정보들을 anonymous memory라고 부르고 swap space 사용 <br/>
+
+Copy on write <br/>
+-
+카피한 것 처럼 페이지를 공유 <br/>
+Vfork() 실제로 복제하지 않고 링크만 가져옴 <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/8752976b-b1e2-4785-a896-eb8a0e3b4cba) <br/>
+
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/ceb26f4e-6d4a-4c76-b119-7a5cceee0f89) <br/>
 
 
 
