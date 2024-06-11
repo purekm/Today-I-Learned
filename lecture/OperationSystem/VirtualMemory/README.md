@@ -188,6 +188,7 @@ FIFO Algorithm <br/>
 
 Optimal Algorithm <br/>
 -
+프레임안에 있는 숫자 중 가장 늦게 사용하는 숫자를 교체
 미래에 어떤 걸 사용하는지 알아야 하므로 구현하기 어렵긴하다... <br/>
 FIFO에서는 15번의 page fault가 일어났지만, Opt 에서는 9번의 page fault <br/>
 ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7a86c852-e356-4902-b9aa-436b6fa5f244) <br/>
