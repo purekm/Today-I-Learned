@@ -225,7 +225,7 @@ hardware의 도움을 받아서 LRU하는 버전<br/>
    3. 주기적으로 reference bit을 0으로 초기화 해줌(나중에 순서를 모르겠지만 어쩔 수 없음)<br/>
 2. Second-chance algorithm<br/>
    1. Clock replacement<br/>
-   2. 1이면 기회를 한번 주고, 0이 나감<br/>
+   2. 1이면 (기회를 한번 주고)0으로 변경하고, 0이면 교체 <br/>
 ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/05fbbb3a-0055-4e3c-9a95-69c25a294390)<br/>
 3. Enhanced Second-chance algorithm<br/>
 dirty bit까지 사용<br/>
