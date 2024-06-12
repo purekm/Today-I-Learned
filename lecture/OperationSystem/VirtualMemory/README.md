@@ -279,19 +279,94 @@ Maximum of frames<br/>
 
 3. priority allocation<br/>
 
-Global vs Local Allocation
-1. Global - 전체 중에서
-2. Local - 자기꺼 에서
+Global vs Local Allocation<br/>
+1. Global - 전체 중에서 교체할껀지<br/>
+2. Local - 자기꺼에서 교체할껀지<br/>
+선택의 문제로 각자의 장 단점이 있음<br/>
+
+Reclaiming Pages<br/>
+-
+global page replacement일때 발생<br/>
+free frame의 수가 임계치에 도달하면 페이지 교체를 미리 함<br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/3b14a8a6-540a-4668-8935-582de97dc83c)<br/>
+
+Non-Uniform memory access<br/>
+-
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/e42c8863-5638-4438-b3ba-a2a4928ebd9e)<br/>
 
 
+Thrasing<br/>
+-
+어느 순간이 되면 page fault가 급격히 늘어남 - 악순환<br/>
+프로세스가 프로그램 실행보다 페이징에 시간을 더 많이 보내는 현상 - thrashing<br/>
+페이지를 내보내고 들이는 데 시간을 더 많이 씀 -> I/O 연산이 많아짐 -> CPU의 활용도가 떨어짐 <br/>
+OS에 판단하기에 I/O 활용도가 낮으면 더 많이 쓸 수 있지 않을까? 라는 착각을 하게 됨 -> 상황 악화<br/>
+
+Demand Paging 과 Thashing의 관계<br/>
+Locality model - 같이 활발하게 사용하는 페이지의 집합<br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/f07c275d-8d57-4bee-ad65-52c3a4e8acb4)<br/>
+
+Local 이나 priority page replacement 쓰면 해결되는거 아니야?<br/>
+-> local page replacement로는 해결 불가.<br/>
+
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b7eab161-349f-4f88-a986-d77b6cd262af)<br/>
+전체 메모리를 다 쓰지는 않음(지역성)<br/>
+
+Working-Set model<br/>
+-
+일정 시간동안 어떤 페이지가 조회되었는지, 몇개가 조회되었는지 측정하는 model
+일정 시간 - instruction들이 실행되는 시간
+일정 시간을 잘 정하는게 중요함
+일정시간 동안 사용되었던 프레임의 크기 = working set
+
+D>m -> Trashing
+어떻게 working set을 추적해?
+-> Timer와 reference bit을 사용하여 근사치를 계산
+
+Page-Fault Frequency
+-
+local replacement policy
+
+page fault의 빈도수를 통해서 결정
+page fault 많이 일어났으면 frame 더 주는?
 
 
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/99cc8eb7-c240-4959-8b7f-0557d51e5d33)
+지역성이 이동한다고 말함 - 구간을 working set으로 지정
+
+Allocating Kernel model
+-
+커널 맞춤형으로 코드를 짜면 편하지않나?
+초창기 Buddy System Allocator
+메모리가 부족하면, 메모리를 절반씩 잘라서 줌 - 나중에 반자른거 합치면 복구
+
+현재 Slab Allocator
+Slab - 하나의 물리적으로 연속적인 페이지
+Cache - 하나 이상의 slab
+kernel object 크기에 맞춰서 cache를 자름 
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/6f3f50aa-d3d4-486c-8c25-cd11bf288962)
 
 
+Prepaging
+-
+실행 파일에 대한 prepaging은 예측하기 어렵지만, 데이터 파일에 대한 prepaging은 예측가능하다.
 
 
+Page size
+-
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/48382a01-10d8-4e8d-a75d-026c6914a51a)
+Fragmentation은 페이지 크기가 작을수록 좋음
 
+TLB Reach
+-
+TLB 엔트리가 많으면 좋지만, 비쌈 
+TLB Reach - TLB로 접근 가능한 메모리양
+TLB Reach = TLB Size * Page Size  - TLB 크면 좋아
 
+I/O interlock
+-
+I/O 버퍼들이 있는 페이지는 교체되면 문제가 생기기 때문에 고정 시킴
 
-
+Linux 에서는 앞에 있는 애들은 자주 사용하고, 뒤에 애들은 덜 사용함
+Window 에서는 clustering 방법을 쓰기 때문에, 페이지 fault 기준 앞뒤 3개 총 7개를 불러들임
 
