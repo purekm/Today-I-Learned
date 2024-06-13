@@ -9,16 +9,21 @@ Serializable 스케줄<br/>
 1. 직렬 스케줄과 결과가 동일한 스케줄 – 일관성을 보장하는데 유용함 <br/>
 2. 병렬로 실행되지만 결과가 직렬 스케줄과 동일한 스케줄<br/><br/>
 
+Serializability <br/>
+각 트랜잭션은 데이터베이스의 일관성을 유지
+트랜잭션 집합의 직렬 실행은 데이터베이스 일관성 유지
+스케줄이 직렬 스케줄과 동등하면 직렬 가능 스케줄이라고 함
+
 Conflict Serializability<br/>
 1. 두 스케줄이 각 트랜잭션의 연산 순서를 보존하면서 서로 변환 될 수 있는 경우<br/>
 2. 동일한 데이터 항목에 대한 읽기와 쓰기, 쓰기와 쓰기 연산 순서가 같아야함<br/><br/>
-
+non conflict(seiral 한 스케줄의 명령어를 swap)한 스케줄이랑 serial한 애가 충돌 동등함
 View Serializability<br/>
 1. 각 트랜잭션이 읽는 값과 최종 결과가 동일할 경우<br/><br/>
+2. 스케줄 S에서 Ti가 Q를 읽고 그 값이 Tj에의해 생성된 값이라면 스케줄 S’에서도 동일한 쓰기 연산에 의해 생성된 Q를 읽어야 한다. <br/><br/>
 
-View Serializability <br/>
-1. 스케줄 S에서 Ti가 Q를 읽고 그 값이 Tj에의해 생성된 값이라면 스케줄 S’에서도 동일한 쓰기 연산에 의해 생성된 Q를 읽어야 한다. <br/><br/>
-
+Conflicting instructions<br/>
+-
 ![그림3](https://github.com/purekm/Today-I-Learned/assets/90774046/6b5c8633-2f66-4b71-960f-62cb936168ba)
 
 두 명령어가 동일한 데이터 항목 Q를 액세스 하는데, 둘 중하나가 write인 경우 무조건 conflict 발생<br/>
