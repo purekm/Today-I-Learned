@@ -10,6 +10,8 @@ int snack[1000001];
 
 
 int main(){
-    cout << "Hello";
+    int s;
+    cin >> s;
+    cout << s;
     return 0;
 }
