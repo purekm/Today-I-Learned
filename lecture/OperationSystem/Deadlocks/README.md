@@ -1,15 +1,27 @@
 8장 Dead Lock <br/>
+
+livelock - 스레드가 정체된 상태는 아니지만, 계속 시도해도 진행이 안되는 경우(사이클인가?)<br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b51c6023-685a-48ac-9ab5-51a96fe7365b)<br/>
+
 Deadlock의 특성 및 필요조건<br/>
 Mutual exclusion  - 적어도 하나의 자원이 공유 불가 때문에 deadlock<br/>
 Hold and wait – 뭔가를 잡고 대기중 <br/>
 No preemption – Task가 끝나야 자원을 놓는데, 자원을 안 놓으면 deadlock<br/>
 Circular wait – 원형 대기가 있음<br/>
 
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/0ef22853-3b60-44cb-82d0-46adf274dfcf)
-deadlock 발생 <br/>
+모두 충족하면 deadlock 발생<br/>
 
-Single instance 일 경우에는 cycle이면 deadlock, deadlock 이면 cycle이다. 필요충분조건 <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/5131c30c-78ed-46fd-a147-e57b1e330c79)<br/>
+
+
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/0ef22853-3b60-44cb-82d0-46adf274dfcf)
+deadlock 발생 가능<br/>
+
+Single instance(자원) 일 경우에는 cycle이면 deadlock, deadlock 이면 cycle이다. 필요충분조건 <br/>
 Multiple instances 일 경우에는 deadlock 이면 cycle이다. <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/3b760715-bd2c-426a-9f5c-239674cf2a33)
+
+
 
 Deadlock Handling<br/>
 Deadlock을 예방하고 회피하고 탐색하는 등 cost가 비싸기 때문에 대부분의 OS가 무시한다. (미사일 이런건 데드락 걸리면 안되니까 deadlock 방지를 해줌)<br/>
@@ -22,16 +34,16 @@ Mutual Exclusion<br/>
 
 Hold and wait 을 remove<br/>
 -
-시작하기 전에 필요하나 자원을 다 가져 감<br/>
+시작하기 전에 필요한 자원을 다 가져 감<br/>
 잡고 있는 자원이 없을 때만 자원을 요청<br/>
 
 No preemption<br/>
 -
 자원 할당이 불가능하면 가지고 있는 자원을 다 내놓게 함<br/>
 대기 중인 프로세스의 자원을 반납하게 함<br/>
-자원을 다 할당 받을 수 있을 때 까지 프로세스를 시작하지 않음.<br/>
+자원을 다 할당 받을 수 있을 때 까지 프로세스를 시작하지 않음<br/>
 
-3가지 방법 모두 구현하기 어려움<br/>
+3가지 방법 모두 구현하기 어려움 -> Circular wait가 충족안되게 함<br/>
 
 Circular Wait<br/>
 -
@@ -41,6 +53,9 @@ Circular Wait<br/>
 
 Deadlock Avoidance<br/>
 현재 상태를 파악함<br/>
+1. 최대 자원 요구량 선언시 자원 할당을 더 효과적으로 가능<br/>
+2. 데드락 회피 알고리즘은 현재 자원의 할당 상태를 지속적으로 모니터링하여 순환 대기 상태가 발생할 가능성을 차단<br/>
+3. 자원 할당 상태는 사용 가능한 자원과 자원의 수 , 프로세스의 최대 요구량에 의해 정의<br/>
 
 Safe State<br/>
 현재 창고에 있는 자원을 써서 작업이 진행했을 때, 순차적으로 성공하면 safe state<br/>
@@ -73,7 +88,7 @@ Safety Algorithm<br/>
 실패했을 때를 대비해서 복사본인 work 생성<br/>
 Deadlock Detection - Single instance 인 경우<br/>
 ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/6d48079b-1a76-462c-ae72-01b77aebf181)
-
+deadlock 발생<br/>
 
 Several instances 인 경우<br/>
 ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/2055d2dd-3bec-4faf-88ad-7b2b1918388f)
