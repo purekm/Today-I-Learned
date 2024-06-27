@@ -1,4 +1,4 @@
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b682c639-e055-4c3f-92ee-0963bc8228e8)Chapter2 <br/>
+Chapter2 <br/>
 Objectives <br/>
 1. 운영 체제가 제공하는 서비스 설명 <br/>
 2. 운영 체제 서비스를 제공하기 위해 시스템 호출이 사용되는 방법<br/>
