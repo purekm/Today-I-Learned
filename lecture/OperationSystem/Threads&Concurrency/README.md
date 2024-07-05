@@ -1,23 +1,23 @@
-Chapter4
+Chapter4 <br/>
 Objectives
 1. 스레드의 기본 구성 요소 이해 및 프로세스와 비교
 2. 멀티 스레딩의 장점과 구현할 때 challenge
 3. 스레딩에 대한 다양한 접근 방법
 4. 리눅스 운영 체제가 스레드를 어떻게 나타내는지 설명
 
-요즘 applications 들은 대부분 multithreaded 방식
-application 내에서 여러 작업들은 별도의 스레드로 구현될 수 있다.
-예를 들어 화면 업데이트, 데이터 가져오기, 맞춤법 검사, 네트워크 요청 처리 등
-프로세스 생성은 무거운 작업인 반면, 스레드 생성은 가벼운 작업
-커널은 대부분 multithreaded로 작동
+요즘 applications 들은 대부분 multithreaded 방식<br/>
+application 내에서 여러 작업들은 별도의 스레드로 구현될 수 있다.<br/>
+예를 들어 화면 업데이트, 데이터 가져오기, 맞춤법 검사, 네트워크 요청 처리 등<br/>
+프로세스 생성은 무거운 작업인 반면, 스레드 생성은 가벼운 작업<br/>
+커널은 대부분 multithreaded로 작동<br/><br/>
 
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7eb50ef9-5c24-4dc8-bdf6-b84a9498e564)
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7eb50ef9-5c24-4dc8-bdf6-b84a9498e564)<br/>
 single-thread 는 그냥 프로세스라고 생각해도 무방한 것 같다.
 multithreaded 에서는 독립적인 register, stack, PC를 가지면서 code, data files 를 공유한다.
 
 Multithread
 -
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7006a689-d6bd-4443-9613-196e3c3ff8af)
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7006a689-d6bd-4443-9613-196e3c3ff8af)<br/>
 멀티 스레드 서버는 클라이언트 요청을 처리하기 위해 여러 스레드를 사용한다.
 이런 접근 방식은 서버의 응답성을 향상시키고, 여러 클라이언트의 요청을 동시에 처리할 수 있게 한다.
 
@@ -35,8 +35,8 @@ Amdahl's Law - application의 병렬 및 직렬 컴포넌트를 고려한 성능
 User Threads and Kerenel Threads
 -
 User 와 Kernel 관계 (Many to One, One to One, One to Many)
-Many to One 
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7ddb2378-f3e7-4dce-8584-5abf111f9c5f)
+Many to One <br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7ddb2378-f3e7-4dce-8584-5abf111f9c5f)<br/>
 사용자 프로세스에 상응하는 커널 스레드가 하나만 있음
 장점으로 원하는 만큼 사용자 스레드를 생성할 수 있음
 
@@ -47,8 +47,8 @@ One to One (현대 OS)
 Many to Many
 이론상 사용자 스레드 맘대로 생성가능하고, 병렬 실행도 가능하지만 구현이 어려움
 
-Two-level
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1700d5d0-6010-4463-9513-0cd5461d14ea)
+Two-level<br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1700d5d0-6010-4463-9513-0cd5461d14ea)<br/>
 두 관계가 동시에 실행되는 모델도 존재
 
 Thread Libraries - 프로그래머에게 스레드를 생성하고 관리할 수 있는 API 제공
@@ -62,8 +62,8 @@ Thread Pool
 2. application의 스레드 수를 풀의 크기로 제한 가능
 3. 작업을 수행하는 것과 작업을 생성하는 것을 분리하여 다양한 실행 전략을 사용할 수 있음
 
-Fork-Join Parallelism - 여러 스레드를 fork하여 생성하고, 완료된 후에는 join하여 결과를 결합하는 방식
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/387fa10d-facc-4244-9b9a-6f95f6af9dd5)
+Fork-Join Parallelism - 여러 스레드를 fork하여 생성하고, 완료된 후에는 join하여 결과를 결합하는 방식<br/>
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/387fa10d-facc-4244-9b9a-6f95f6af9dd5)<br/>
 
 Signal Handling
 -
