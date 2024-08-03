@@ -1,0 +1,17 @@
+기존의 lecture 폴더의 Operating System Structure에 대한 내용을 수정 및 추가했다.
+
+운영체제가 제공하는 서비스
+Communication: 프로세스 간의 정보 교환은 공유 메모리나 메시지 전달을 통해 이루어질 수 있음 
+System Call
+System Call Parameter Passing: 운영 체제에 매개변수를 전달하는 세 가지 방법:
+레지스터에 파라미터 전달
+메모리 블록 또는 테이블에 파라미터를 저장하고, 블록의 주소를 레지스터에 저장
+파라미터를 스택에 놓고, 운영 체제가 스택에서 pop함
+
+운영 체제 설계 전략
+Modular 설계:
+"Linux와 Solaris 같은 현대 운영 체제는 유연한 모듈형 구조를 채택하고 있으며, 필요에 따라 커널 모듈을 동적으로 로드할 수 있음" 
+부트 과정:
+현대 시스템에서는 BIOS 대신 UEFI(통합 확장 펌웨어 인터페이스)를 사용하며, 일반적으로 GRUB 부트로더를 통해 커널을 선택할 수 있음 
+Debug 및 성능 튜닝
+Tracing Tools: Linux의 BPF Compiler Collection(BCC)은 Linux 시스템에서 트레이싱 기능을 제공하는 도구 모음으로, strace, gdb, perf 등의 도구가 포함됨 
