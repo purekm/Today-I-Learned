@@ -1,90 +1,78 @@
-Chapter4 <br/>
-Objectives
+# Chapter 4 - Overview
+
+## Objectives
 1. 스레드의 기본 구성 요소 이해 및 프로세스와 비교
-2. 멀티 스레딩의 장점과 구현할 때 challenge
-3. 스레딩에 대한 다양한 접근 방법
+2. 멀티 스레딩의 장점과 구현할 때의 도전 과제
+3. 스레딩에 대한 다양한 접근 방법 설명
 4. 리눅스 운영 체제가 스레드를 어떻게 나타내는지 설명
 
-요즘 applications 들은 대부분 multithreaded 방식<br/>
-application 내에서 여러 작업들은 별도의 스레드로 구현될 수 있다.<br/>
-예를 들어 화면 업데이트, 데이터 가져오기, 맞춤법 검사, 네트워크 요청 처리 등<br/>
-프로세스 생성은 무거운 작업인 반면, 스레드 생성은 가벼운 작업<br/>
-커널은 대부분 multithreaded로 작동<br/><br/>
+## Multithreading and Applications
 
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7eb50ef9-5c24-4dc8-bdf6-b84a9498e564)<br/>
-single-thread 는 그냥 프로세스라고 생각해도 무방한 것 같다.
-multithreaded 에서는 독립적인 register, stack, PC를 가지면서 code, data files 를 공유한다.
+### 개요
+요즘 대부분의 애플리케이션은 멀티스레딩 방식으로 구현됨. 애플리케이션 내에서 여러 작업은 별도의 스레드로 구현될 수 있음. 예를 들어, 화면 업데이트, 데이터 가져오기, 맞춤법 검사, 네트워크 요청 처리 등이 있음. 프로세스 생성은 무거운 작업인 반면, 스레드 생성은 가벼운 작업임. 대부분의 커널은 멀티스레드 방식으로 작동함.
 
-Multithread
--
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7006a689-d6bd-4443-9613-196e3c3ff8af)<br/>
-멀티 스레드 서버는 클라이언트 요청을 처리하기 위해 여러 스레드를 사용한다.
-이런 접근 방식은 서버의 응답성을 향상시키고, 여러 클라이언트의 요청을 동시에 처리할 수 있게 한다.
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7eb50ef9-5c24-4dc8-bdf6-b84a9498e564)
 
-Multithreading 장점
-1. Responssiveness(응답성) - 프로세스의 일부가 블록되어도 계속 실행될 수 있어서, 특히 사용자 인터페이스에 중요
-2. Resource Sharing(자원 공유) - 스레드는 프로세스의 자원을 공유하므로 공유 메모리 or 메시지보다 쉽게 자원 공유 가능
-3. Economy(경제성) - 스레드 생성이 프로세스 생성보다 저렴하고, 스레드 전환이 context switch보다 오버헤드가 적음
-4. Scalability(확장성) - 프로세스가 멀티코어 구조의 장점을 활용할 수 있음
+### Single-thread vs Multithreaded
+- 싱글 스레드는 단순히 프로세스라고 생각할 수 있음. 멀티스레드 프로세스는 독립적인 레지스터, 스택, 프로그램 카운터(PC)를 가지면서 코드, 데이터, 파일을 공유함.
 
-Parallelism(병렬) - 시스템이 동시에 둘 이상의 작업을 수행 
-Concurrency(병행) - 둘 이상의 작업이 진행 중 (단일 프로세서/코어의 경우)
+## Multithreading의 장점
 
-Amdahl's Law - application의 병렬 및 직렬 컴포넌트를 고려한 성능향상 평가 
+### 멀티스레드의 이점
+1. **응답성(Responsiveness)**: 프로세스의 일부가 블록되어도 계속 실행될 수 있어서, 특히 사용자 인터페이스에 중요함.
+2. **자원 공유(Resource Sharing)**: 스레드는 프로세스의 자원을 공유하므로, 공유 메모리나 메시지 전달 방식보다 자원 공유가 쉬움.
+3. **경제성(Economy)**: 스레드 생성이 프로세스 생성보다 저렴하고, 스레드 전환이 문맥 전환(context switch)보다 오버헤드가 적음.
+4. **확장성(Scalability)**: 프로세스가 멀티코어 구조의 장점을 활용할 수 있음.
 
-User Threads and Kerenel Threads
--
-User 와 Kernel 관계 (Many to One, One to One, One to Many)
-Many to One <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7ddb2378-f3e7-4dce-8584-5abf111f9c5f)<br/>
-사용자 프로세스에 상응하는 커널 스레드가 하나만 있음
-장점으로 원하는 만큼 사용자 스레드를 생성할 수 있음
+### 병렬 처리 vs 병행 처리
+- **병렬 처리(Parallelism)**: 시스템이 동시에 둘 이상의 작업을 수행할 수 있는 능력.
+- **병행 처리(Concurrency)**: 둘 이상의 작업이 진행 중인 상태 (단일 프로세서/코어의 경우).
 
-One to One (현대 OS)
-스레드가 블로킹되면 다른 스레드를 실행할 수 있고, 여러 개의 스레드를 다중 코어에 매핑할 수 있음
-하지만 사용자 스레드를 무한정 생성할 수 없음
+### Amdahl's Law
+- Amdahl's 법칙은 애플리케이션의 병렬 및 직렬 컴포넌트를 고려하여 성능 향상을 평가함. 예를 들어, 애플리케이션이 75% 병렬로 구성된 경우, 2개의 코어를 사용하면 성능이 1.6배 향상될 수 있음. 코어 수가 증가해도 직렬 컴포넌트가 성능 향상을 제한함.
 
-Many to Many
-이론상 사용자 스레드 맘대로 생성가능하고, 병렬 실행도 가능하지만 구현이 어려움
+## Multithreading Models
 
-Two-level<br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1700d5d0-6010-4463-9513-0cd5461d14ea)<br/>
-두 관계가 동시에 실행되는 모델도 존재
+### User Threads and Kernel Threads
+- **User Threads**: 사용자 수준에서 관리되며, 주요 스레드 라이브러리로는 POSIX Pthreads, Windows threads, Java threads가 있음.
+- **Kernel Threads**: 커널에서 지원하며, 대부분의 범용 운영 체제에서 지원됨 (예: Windows, Linux, Mac OS X, iOS, Android).
 
-Thread Libraries - 프로그래머에게 스레드를 생성하고 관리할 수 있는 API 제공
-Asynchronous threading(비동기 스레딩) - 부모와 자식 스레드가 독립적으로 병행 실행
-Synchronous threading(동기 스레딩) - 부모 스레드는 자식 스레드가 종료될 때 까지 기다림
+### 사용자 스레드와 커널 스레드의 관계
+1. **Many to One**: 많은 사용자 수준 스레드가 하나의 커널 스레드에 매핑됨. 이 모델은 병렬 실행이 불가능하며, 예시로는 Solaris Green Threads, GNU Portable Threads가 있음.
+2. **One to One**: 각 사용자 스레드가 커널 스레드에 매핑됨. 다중 코어에서 병렬로 실행할 수 있지만, 사용자 스레드의 수가 제한될 수 있음.
+3. **Many to Many**: 여러 사용자 스레드가 여러 커널 스레드에 매핑될 수 있음. 이론적으로 병렬 실행이 가능하지만, 구현이 어려움.
+4. **Two-level Model**: M:M 모델과 유사하나, 사용자 스레드가 커널 스레드에 바인딩될 수 있음.
 
-Thread Pool
-스레드를 필요할 때 사용할 수 있도록 만들어 놓는 것
-장점
-1. 기존 스레드를 재사용하여 새로운 스레드를 생성하는 것보다 빠르게 요청처리 가능
-2. application의 스레드 수를 풀의 크기로 제한 가능
-3. 작업을 수행하는 것과 작업을 생성하는 것을 분리하여 다양한 실행 전략을 사용할 수 있음
+## Thread Libraries
 
-Fork-Join Parallelism - 여러 스레드를 fork하여 생성하고, 완료된 후에는 join하여 결과를 결합하는 방식<br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/387fa10d-facc-4244-9b9a-6f95f6af9dd5)<br/>
+### 스레드 라이브러리
+스레드 라이브러리는 프로그래머에게 스레드를 생성하고 관리할 수 있는 API를 제공함. 
+- **POSIX Pthreads**: 사용자 수준 또는 커널 수준에서 제공됨.
+- **Windows threads**: 커널 수준에서 지원됨.
+- **Java threads**: 운영 체제에 따라 다름.
 
-Signal Handling
--
-Signal - 특정 이벤트가 발생했음을 프로세스에 알리는 데 사용
-default는 signal을 받았을 때 dead(종료)
-Signal handler - signal 처리
-Signal이 왔을 때 코드를 실행시키고 싶으면 Handler를 사용
+### 암시적 스레딩 (Implicit Threading)
+- 스레드 수가 증가함에 따라 명시적 스레드 사용보다 암시적 스레드 사용이 인기를 끌고 있음.
+- **Thread Pool**: 미리 스레드를 생성해두고 필요할 때 할당하여 사용함. 
+  - 장점: 새로운 스레드를 생성하는 것보다 기존 스레드를 사용하는 것이 더 빠르며, 애플리케이션의 스레드 수를 풀의 크기로 제한할 수 있음.
+- **Fork-Join Parallelism**: 여러 스레드를 생성(fork)하고, 작업이 완료되면 결합(join)하는 방식으로 병렬 처리를 수행함.
+- **Grand Central Dispatch (GCD)**: Apple에서 제공하는 기술로, 병렬 실행이 가능한 코드를 지정하고 GCD가 스레드를 관리함.
 
-Multi-Thread에 signal이 온 경우
-Signal을 허용할 수 있는 thread 중 아무나한테 signal을 보냄 (오류난 thread 죽이는 경우)
-모든 thread에게 보냄 (프로세스를 끝내는 경우)
-어떤 thread에게 보냄 (가능한 thread 중 아무나 실행)
-특정 thread에게 보냄
+## Threading Issues
 
-Thread Cancellation
--
-Thread Cancellation - 스레드가 완료되기 전에 종료되는 것을 의미
-Target Thread - 취소될 스레드
-Thread Cancellation 에는 두 가지 일반적인 방식이 존재
-1. Asynchronous cancellation(비동기 취소) - 대상 스레드를 즉시 종료
-   할당된 자원을 모두 free하지 못할 수 있음
-2. Deferred cancellation(지연 취소) - 대상 스레드가 주기적으로 자신이 취소되어야 하는지 확인
-   Cancellation point에서 스레드를 cancel함
+### 시그널 처리 (Signal Handling)
+- 시그널은 특정 이벤트가 발생했음을 프로세스에 알리는 데 사용됨. 단일 스레드 환경에서는 시그널이 프로세스에 전달됨.
+- 멀티스레드 환경에서는 시그널을 특정 스레드에 전달하거나, 모든 스레드에 전달할 수 있음.
 
+### 스레드 취소 (Thread Cancellation)
+- **비동기 취소(Asynchronous cancellation)**: 대상 스레드를 즉시 종료함.
+- **지연 취소(Deferred cancellation)**: 대상 스레드가 취소 지점에서 종료됨.
+
+### 스레드 로컬 저장소 (Thread-Local Storage, TLS)
+- 각 스레드가 고유한 데이터를 가질 수 있도록 허용하며, 함수 호출 간에도 유지되는 데이터임.
+
+## Linux에서의 스레드 처리
+- 리눅스에서는 스레드를 "태스크(task)"라고 부르며, 스레드 생성은 `clone()` 시스템 호출을 통해 이루어짐. 이 호출은 자식 태스크가 부모 태스크의 주소 공간을 공유할 수 있게 함.
+- `task_struct` 구조체가 프로세스 데이터 구조를 가리키며, 프로세스 간에 공유되거나 고유하게 사용됨.
+
+---
