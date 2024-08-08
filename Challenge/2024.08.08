@@ -1,0 +1,38 @@
+스태틱 디렉터리 설정
+config/settings.py 수정:
+    STATICFILES_DIRS 리스트 변수에 BASE_DIR / 'static' 디렉터리를 추가
+    STATIC_URL = 'static/'
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+    ]
+    BASE_DIR / 'static'은 프로젝트 루트 디렉터리(mysite) 아래에 static이라는 디렉터리
+
+스타일시트 작성
+    style.css 파일 작성:
+        static 디렉터리 안에 style.css 파일을 생성하고, 텍스트 입력 창과 버튼에 적용할 스타일을 정의
+        textarea {
+            width: 100%;
+            }
+            input[type=submit] {
+                margin-top: 10px;
+        }
+    텍스트 영역의 너비를 100%로 설정하고, "답변 등록" 버튼 위에 10px의 여백을 추가하는 CSS 스타일을 포함
+
+템플릿에 스타일 적용
+    question_detail.html 수정:
+        템플릿 파일 상단에 {% load static %} 태그를 추가하고, 스타일시트 파일을 불러온다.
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+    <h1>{{ question.subject }}</h1>
+
+
+템플릿 상속:
+question_list.html과 question_detail.html에 템플릿 상속을 적용하여 중복되는 코드를 제거하고, 표준 HTML 구조를 따르도록 변경한다.
+두 템플릿 모두 상단에 {% extends 'base.html' %}를 추가하여 base.html 템플릿을 상속받도록 한다.
+기존에 상위 템플릿(base.html)에 이미 포함된 CSS 파일 링크는 제거하고, {% block content %}와 {% endblock %} 태그 사이에 각 템플릿에 고유한 내용을 작성한다.
+
+템플릿 구조 변경:
+상속을 통해 question_list.html과 question_detail.html은 표준화된 HTML 구조로 변환된다.
+이는 코드의 재사용성을 높이고 유지보수를 용이하게 한다.
+
+
