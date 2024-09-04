@@ -6,7 +6,7 @@
 - **interface** 는 네트워크에서 통신을 가능하게 하는 장치 또는 소프트웨어 구성 요소.
 OS에서는 기본적으로 여러 interface에 대한 protocol rules 을 가지고 있음. interface(Ethernet에서 접속하는 protocol과 wifi protocol)가 다르니까 그걸 OS가 조절 
 
-Layer5~Layer3까지는 다른 게 없고 Link layer에서부터 다른 interface로 인한 차이 발생.
+- Layer5~Layer3까지는 다른 게 없고 Link layer에서부터 다른 interface로 인한 차이 발생.
 
 ## Layered Communications
 - 실제로는 아래의 layer을 통해서 연락하지만, 상대방 입장에서는 같은 layer와 연락하는 느낌을 줌
