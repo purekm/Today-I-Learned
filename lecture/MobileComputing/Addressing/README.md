@@ -20,6 +20,7 @@
 
 # Network prefix
 ![alt text](image-1.png)
+
 - 전체 32bit 
 - Domain name은 바꾸지 않고, ip 바꾸기 가능 
 
@@ -30,6 +31,7 @@
 - Class D - 멀티 캐스트용
 - Class E - 예비용
 ![alt text](image-2.png)
+
 # Class 방식의 문제점
 - Flat address space
 - Class A와 B는 과하게 할당되었고, Class C는 너무 적게 할당됌
@@ -42,9 +44,11 @@
 - IP에 대한 새로운 해석으로, network prefix의 길이를 자유롭게 사용하되, 길이 명시
 - Network number = IP address + prefix length
 ![alt text](image-3.png)
+
 - 12.4.0.0/15라고 명시해줘야함.
 
 ![alt text](image-4.png)
+
 - 이제 확장성이 좋아져서, 큰 블록을 기업에 넘겨주면 기업에서 고객들에게 쪼개서 할당
 
 ## Subnetting
@@ -61,6 +65,7 @@
 - Subnetmask – 255.255.255.0
 - Subnetmask는 네트워크와 host를 구분하는 역할
 ![alt text](image-6.png)
+
 - match 하는 ip인지 subnetmask 잘 확인 해보는 것이 중요
 
 # Subnetting Advantages
@@ -81,6 +86,7 @@
 
 ## Broadcast Address
 ![alt text](image-8.png)
+
 - prefix 자리를 제외하고, host 자리를 1로 다 채움
 - 예시의 경우 128.32.1.14/24
 
