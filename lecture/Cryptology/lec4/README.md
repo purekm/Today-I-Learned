@@ -4,6 +4,15 @@
 17^14 mod 8 =( 1 mod 8 )^14
 사칙연산에서는 mod를 먼저 사용가능
 
+## Group
+- 이진 연산이 정의된 원소들의 집합
+- Closure a,b ∈ G에 대해 a*b ∈ G
+- 결합법칙 a,b,c ∈ G에 대해 (a*b)*c = a*(b*c)
+- 항등원 e*a = a*e = a여야함. 
+- 역원 역원을 가지고 있어야 함.
+- **아벨 군**은 교환 법칙을 만족함
+![alt text](image-2.png)
+![alt text](image-1.png)
 ## Extended Uclid Algorithm
 - GCD 함수처럼 최대 공약수를 찾지만, 선형 다항식의 형태로 찾는다.
 - 선형 다항식의 미지수 x,y 값을 찾는게 확장 유클리드의 핵심

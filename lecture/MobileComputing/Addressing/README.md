@@ -1,3 +1,7 @@
+## Question
+- what should an address be associated with?
+- what structure should addresses have?
+- who determines the particular addresses used in the global internet? What the implications of how this is done?
 ## IP Connectivity
 - Addressing
 - Forwarding
@@ -15,6 +19,11 @@
 # IP Header
 ![alt text](image.png)
 
+# What are addresses Used for 
+- network forward
+- router forward
+- switches는 내부에서 전달만 해줌(길이 정해져 있음) 
+
 # Who owns IP address?
 - ICANN - IP 주소 관리 및 배분, root server 관리
 
@@ -30,6 +39,9 @@
 - Class C - 24bits long
 - Class D - 멀티 캐스트용
 - Class E - 예비용
+![alt text](image-10.png)
+![alt text](image-11.png)
+- 앞에 indentify key bit만큼 빼줘야 함. C는 21bit 개의 네트워크 존재
 ![alt text](image-2.png)
 
 # Class 방식의 문제점
@@ -72,15 +84,23 @@
 - 시스템 자체의 complexity는 증가하지 않으면서, 더 많은 host를 추가할 수 있음
 - router의 complexity가 줄어듦. 여러 개의 라우터를 신경쓰지 않아도 되니까.
 
+# Advantages of Subnetting
+- Network
+- Subnet
+- Host
+
 # VLSM
 - Subnet의 크기를 원하는대로 조절 가능
 ![alt text](image-7.png)
 
+![alt text](image-12.png)
+Host가 4bit이므로 총 16명. 그러면 host가 192~207까지인데, 끝과 끝 제외 
+-> host 14명 
 # Multicast address
 - Source IP에는 전송자 IP, Destination IP에는 group IP를 사용
 - 224.0.0.1을 사용하면 subnet(group)내의 모든 interface를 destination으로 사용
 - 224.0.0.2을 사용하면 subnet(group)내의 모든 router을 destination으로 사용
-- 224.0.0.0 ~ 224.0.0.255 는 일반적인 multicast 주소
+- 224.0.0.0 ~ 224.0.0.255 는 일반적인 multicast 주소 제어를 위해 사용
 - 224.0.1.0 ~ 238.255.255.255은 전 세계적으로 multicast 가능
 - 239.0.0.0 ~ 239.255.255.255 관리자에 의해 정의되며, 특정 로컬 네트워크에서 사용 가능
 
@@ -100,17 +120,20 @@
 
 실제로는 directed brodcast가 진행되면, router은 Smurf attack때문에 discard 함
 
+![alt text](image-13.png)
+
 ## Special Addresses
 # Loopback interfaces
-- 127.0.0.1~127.255.255.255는 local host
+- 127.0.0.1~127.255.255.255는 local host (127로 시작하면 loopback)
 - 주로 127.0.0.1을 사용
 
 # Private address
-- 사설 주소는 내부 네트워크에서만 사용하도록 예약된 주소
+- 사설 주소는 내부 네트워크에서만 사용하도록 예약된 주소로, 사용하면 drop됨
 ![alt text](image-9.png)
 
 # This machine
 - 0.0.0.0 주소로, 시스템이 아직 IP를 할당받기 전이나,IP 주소를 지정할 때 사용되는 임시 주소
 
 # Convention
-- default 게이트웨이 주소는 관례적으로 호스트 번호가 1로 설정. 설계에 따라 다를 수 있음.
+- default 게이트웨이 주소는 관례적으로 호스트 번호가 1로 설정 
+설계에 따라 다를 수 있음.
