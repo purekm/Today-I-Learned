@@ -15,7 +15,8 @@
 - 64bytes보다 작으면 Collision Dectection이 안되서 46bytes에서 IP header+ Transport Header + 2bytes를 해줘야 함
 
 ## Loopback interface
-- Broadcast와 Multicast로 들어온 or 보낼 Datagram들은 datagram을 복사해서 하나는 loopback interface로 보내고, 하나는 Ethernet로 나가야 함.
+- Broadcast와 Multicast로 보낼 Datagram들은 datagram을 복사해서 하나는 loopback interface로 보내고, 하나는 Ethernet로 나가야 함. 
+- Broadcast
 ![alt text](image-4.png)
 
 ## ARP
