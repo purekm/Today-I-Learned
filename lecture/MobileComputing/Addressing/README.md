@@ -81,13 +81,11 @@
 - match 하는 ip인지 subnetmask 잘 확인 해보는 것이 중요
 
 # Subnetting Advantages
-- 시스템 자체의 complexity는 증가하지 않으면서, 더 많은 host를 추가할 수 있음
+
+- Network, Subnet, Host 로 3계층 구조를 가짐
+- 시스템 자체의 complexity는 증가하지 않음
 - router의 complexity가 줄어듦. 여러 개의 라우터를 신경쓰지 않아도 되니까.
 
-# Advantages of Subnetting
-- Network
-- Subnet
-- Host
 
 # VLSM
 - Subnet의 크기를 원하는대로 조절 가능

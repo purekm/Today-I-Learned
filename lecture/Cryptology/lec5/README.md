@@ -1,6 +1,6 @@
 ## AES
-- 128, 192, 256 bits의 key로 구성되어 있음.
-- iterative한 구조로 Round가 반복됨.
+- 128, 192, 256 bits의 key + 128bit data  
+- iterative한 구조로 Round가 반복됨.(feistel cipherX)
 - 하나의 블록을 4개의 columns와 4개의 bytes로 설정 (총16bytes)
 - 알려진 공격에 대해 저항성이 있음
 - 속도와 코드가 간결해서 저사양의 CPU에서도 사용 가능하며, 디자인도 간단함
@@ -9,6 +9,7 @@
 ![alt text](image.png)
 - Round 마다 key가 사용되는데, key schedule을 통해 각 라운드마다 다른 key를 사용하며, inital Xor연산
 - Round 에서는 Substitute Bytes, Shift Rows, Mix columns 등의 함수 사용
+- XOR 연산과 table look up만으로 구현 가능
 
 # Add round key
 - Xor 연산만으로 가능하며, 라운드 키와 state 배열의 열을 Xor
@@ -32,6 +33,9 @@
 - Key가 반대로 적용 됨.
 - 정석적으로 가능하지만, 순서를 바꿔 Encryption과 유사하게 만들 수 있음.
 - ![alt text](image-6.png)
+- byte substitution&shift rows의 연산 순서를 바꿔도 결과에 영향X
+- mix columns & add round key의 연산 순서를 바꿔도 결과에 영향 X
+
 
 ## Key Expansion
 - 초기의 키들은 state의 열로 구성되지만, 이후의 키들은 자체적으로 생성
@@ -40,3 +44,7 @@
 - **LRotWord** 는 왼쪽으로 순환 이동
 - **S-Box** 는 S-Box 넣어서 Byte 변환
 - 이후 변환된 결과와 RConstant를 Xor 하면 다음 키 생성
+
+***AES는 8비트 CPU에서 효율적으로 구현될 수 있는 알고리즘***
+
+
