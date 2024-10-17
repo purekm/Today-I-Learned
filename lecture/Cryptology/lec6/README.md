@@ -8,18 +8,26 @@
 ## Block vs Stream Cipher
 - Block mode는 블록 단위(128bit)로 암호화
 - Stream mode는 한 bit씩 처리하는데, 그래서 random bit를 정하는 방식이 매우 중요
+![alt text](image-9.png)
 
 ## Block Mode
+- 5개의 모드(ECB,CBC,CFB,OFB,CTR)가 존재
+- block mode 와 stream 모드를 지원
+
 # ECB
+- **Secure transmission of single value**
 - 동일한 데이터가 input 되면 암호화 된 데이터, 즉 출력이 같아서 유추 가능
 - input의 길이가 128bit보다 작을 때 사용
 - ![alt text](image-1.png)
 - input의 길이와 output의 길이가 같다는 단점이 있음
 
 # Message Padding
-- input이 128bit의 배수가 아닐 때, 빈 자리 수 만큼 0을 채워주고, bit에 0의 개수를 써주는 방식
+- input이 128bit의 배수가 아닐 때, 빈 자리 수 만큼 0을 채워주고, 마지막에 0의 개수를 써주는 방식
+- ![alt text](image-10.png)
 
 # CBC
+- **Block-Oriented transmission**
+- **Authentication**
 - input과 이전에 생성되었던 암호문을 Xor해서 새로운 암호문을만듦
 - 평문 P1 P2가 같아도 다른 암호문이 나옴
 - 복호화도 가능
@@ -33,6 +41,8 @@
 
 ## Stream Mode
 # CFB-s
+- **Stream-Oriented transmission**
+- **Authentication**
 - s bit씩 암호화
 - Block 암호 알고리즘을 통해서 random bit을 생성
 - C1을 initial vector의 뒤에 붙이고, 밀린 bit는 삭제
@@ -40,12 +50,15 @@
 - ![alt text](image-4.png)
 
 # OFB
+- **Stream-Oriented transmission over noisy channel**
 - Nonce는 한번 쓰고 버리는 숫자로, 재사용하면 안됨
 - C1이 없어도 C2를 계산 가능함 - 입력을 미리 계산 가능
 - 순차적 방식으로, CFB와 다르게 암호화된 결과 값이 없어도 다음 계산이 가능
 - ![alt text](image-5.png)
 
 # CTR
+- **Block-Oriented transmission**
+- **Useful for High Speed requirements**
 - Counter을 통해서 입력하는데, Counter1과 Counter2는 1의 차이가 존재
 - OFB처럼 independent하면서, 병렬 처리까지 가능
 - 독립적 방식으로, 이전 결과값이 필요가 없고, 원하는 값만 가능(Random Access)
