@@ -3,7 +3,7 @@
 - Class는 비슷한 Objects의 그룹
 - Inheritance는 상속으로, 관계를 정의할 수 있음
 - 모든 객체는 의도가 있음 -> inheritance도 그에 맞는 의도로 사용해라
-![alt text](image.png)
+- ![alt text](image.png)
 
 # Object란 무엇인가?
 - 주변에 있는 것 중에서 사물이든 개념이 되었든, 확실한 경계가 있고, 고유한 의미가 있어야함(같은 펜 두개가 있어도 객체가 두개 있는 것)
@@ -41,17 +41,17 @@
 
 # Messages passing
 - Objects는 request(message)를 주고 받음으로써 action을 수행함
-![alt text](image-7.png)
+- ![alt text](image-7.png)
 
 - Message passing은 다른 Object를 호출하는 것과 같음. (Java: method, C++: member function)
-![alt text](image-8.png)
+- ![alt text](image-8.png)
 
 - Receiver의 타입에 따라서 같은 message에 대해서 다른 action이 발생할 수 있음(Polymopolism).
 
-![alt text](image-9.png)
+- ![alt text](image-9.png)
 
 - 사람이 객체를 위해 일하지말고, 객체가 사람 대신에 일해라(사람이 갑)
-![alt text](image-10.png)
+- ![alt text](image-10.png)
 
 - Object가 어떻게 action 취하는지는 몰라도 되지만, 어떤 message를 보내야 하는지 알아야 함
 
