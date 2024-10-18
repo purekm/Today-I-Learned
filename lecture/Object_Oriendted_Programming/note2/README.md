@@ -122,6 +122,7 @@ Inheritance hierarchy를 만들 때, 어떤 방식으로 만들까?
 # is a relation
 - Student is a Person, 역은 성립하면 안됨
 - 부모는 포괄적인 개념, 자식은 전문화된 개념
+- **is a**relationship 강화
 - - ***부모가 할 수 있는 일은 자식도 다 할 줄 알아야 함***
 - - ***부모를 사용할 수 있는 곳이면, 자식이 대신 할 수 있어야 함 (LSP-Liskov Substitution Principle)***
 
@@ -131,4 +132,68 @@ Inheritance hierarchy를 만들 때, 어떤 방식으로 만들까?
 - interface의 공유 목적으로 사용할 때는 supertype, subtype로 분류 가능
 
 # implementation inheritance
-- 코드 재사용의 목적으로 상송
+- 코드 재사용의 목적으로 상속을 사용하는 경우도 존재
+- **implemented in terms of** relationship 강화
+- class inheritance 라고도 불림
+- ![alt text](image-23.png)
+- - Stack은 List를 활용하여 만듦
+- - Stack에 있는 function만 부르려면, List를 private하게 선언
+
+# Decide inheritance
+- inheritance of function interface only
+- inheritance of function interface & implementation  
+
+# Appropriate type
+- Pure virtual functon
+- - interface만 상속하기 때문에, 하위 클래스에서 구현해야 함
+- Virtual function
+- - interface + implementation 상속, overriding 가능
+- Nonvirtual function
+- - interface + implementation 상속, overriding 불가능
+
+# reference varaible types 
+
+- static 은 선언했을 때의 type으로, 변하지 않음
+- dynamic 은 실제 type으로, 바뀔 수 있음
+- ![alt text](image-24.png)
+- m의 static type은 Movie
+- m의 dynamic type은 JamesBondMovie. Superclass <- subclass이므로 가능
+- ![alt text](image-26.png)
+- jm의 static type은 JamesBondMovie, 아직 dynamic type이 없는 상태
+- m = jm을 했을때, Superclass <- subclass이므로 가능. 이때의 dynamic type은 jm. 컴파일러는 static type으로만 비교
+- jm = m은 error 
+
+- ![alt text](image-25.png)
+- subclass는 superclass에 assigned 가능 
+- A는 하위 클래스 모두 assign 가능
+
+## Message legality
+- ![alt text](image-27.png)
+- ![alt text](image-28.png)
+- compiler는 operation이 적합한지 static type으로 확인
+- static type에서부터 root 방향으로 올라가면서 확인
+
+- ![alt text](image-29.png)
+- subclass는 superclass가 하는 일 모두 가능하지만, 역은 안됌
+- 왼쪽에서는 Attraction a가 이해할 수 있는 message인지 확인
+- 오른쪽에서는 A가 attraction type인지 확인
+
+- ![alt text](image-30.png)
+- message가 receiver에게 보내졌을 때, runtime에서는 dynamic type 사용
+- static type은 C 지만, dynamic type은 E
+- E의 h() 확인
+
+## Compile & Run Time
+- ![alt text](image-31.png)
+# CompileTime
+- Static or early binding - 컴파일 할때 어떤 함수 or 메소드 호출할지 결정
+- Java/C++ Static function - 객체를 생성하지 않고 호출 
+- C++ Non-virtual function
+
+# Runtime
+- dynamic binding or late binding - 코드가 실행될 때 어떤 함수 or 메소드 호출할지 결정
+- Java/C++ Virtual function - 객체 타입에 따라 호출할 함수 결정하고, 다형성을 구현하는 데 사용
+## Polymorphism
+- 하나의 객체가 multi(Poly) + form(Morphism)을 가질 수 있음
+- Message sender의 입장에서 receiver가 누구냐에 따라서, 다르게 행동할 수 있음
+
