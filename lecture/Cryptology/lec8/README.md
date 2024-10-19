@@ -27,10 +27,14 @@
 
 ## Miller Rabin Algorithm
 - 소수를 찾는 알고리즘으로 n은 무조건 홀수
-![alt text](image-5.png)
+- ![alt text](KakaoTalk_20241019_130711363.png)
+- n이 소수인지 판별하고 싶음. a^n-1 = 1 mod n 이면 n이 소수일 확률이 높음. 그래서 n-1이 뭐야? -> n-1 = 2^k*q
+- a^(2^k)*q = 1 mod n 이면 n이 소수일 확률이 높음. 인수분해 해보면 a^q -1 = 0인지 확인해보고, 나머지 식을 for문을 통해서 확인해봄
+
+- ![alt text](image-5.png)
 - (n-1)은 짝수 n-1 = 2^k*q인데, k랑 q 값을 알아야함
 - (n-1)을 2로 계속 나누면서 k++, 나머지 값이 q
-![alt text](image-4.png)
+- ![alt text](image-4.png)
 
 ## 페르마 정리
 - n이 소수이고 a와 n이 서로소이면 , a^(n-1) = 1 mod n

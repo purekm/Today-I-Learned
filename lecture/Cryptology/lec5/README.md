@@ -33,8 +33,9 @@
 - Key가 반대로 적용 됨.
 - 정석적으로 가능하지만, 순서를 바꿔 Encryption과 유사하게 만들 수 있음.
 - ![alt text](image-6.png)
-- byte substitution&shift rows의 연산 순서를 바꿔도 결과에 영향X
+- byte substitution&shift rows의 연산 순서를 바꿔도 결과에 영향 X
 - mix columns & add round key의 연산 순서를 바꿔도 결과에 영향 X
+- 복호화 할때는 암호화 과정이랑 비슷하게 하기 위해 연산 순서들을 변경
 
 
 ## Key Expansion
@@ -46,5 +47,6 @@
 - 이후 변환된 결과와 RConstant를 Xor 하면 다음 키 생성
 
 ***AES는 8비트 CPU에서 효율적으로 구현될 수 있는 알고리즘***
+- 저사양 CPU에서도 잘 작동하는 알고리즘
 
 

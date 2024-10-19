@@ -47,10 +47,14 @@
 ![alt text](image-2.png)
 
 # TTL
-- 라우터가 패킷을 받으면 가장 먼저 TTL update를 해주고, 0이면 버림
+- 라우터가 패킷을 받으면 가장 먼저 TTL update(-1)를 해주고, 0이면 버림
+- - 내가 받자마자 -1을 하고, 0이면 버림, host에서는 TTL값이 0이어도 받을 수 있음 
+- router만 TTL 값을 -1 함
 - 버릴 때 ICMP를 통해 시간 초과되었다는 메시지를 전송
 ![alt text](image-1.png)
 - ping을 보냈는데, 응답으로 TTL=39가 왔음. TTL이 25정도 줄어있다는 사실을 알 수 있으며, 25hop을 통해서 전달되었다는 사실도 알 수 있음
+
+# checksum
 
 # Routing table
 ![alt text](image-3.png)
@@ -58,3 +62,4 @@
 - 젤 위가 default gateway 로, network mask가 0.0.0.0
 - 연결됨은 해당 네트워크가 로컬 네트워크와 이미 연결되어 있음을 나타냄. router를 통하지 않고 직접 전송
 
+- ip spoofing -> ingress filtering으로 방지 가능

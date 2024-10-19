@@ -32,7 +32,7 @@
 
 - Mac주소가 있으면, 앞에 3바이트 뒤에 3바이트를 구분하고, 중간에 fffe를 더해준다. 이후 앞에서 7번째 bit를 1로 변경
 - 왜 이렇게 하는지 생각해볼 수 있지만, IPv6는 ARP가 없기 때문
-- Mac주소를 통해서 IP를 얻을 수 있는데, 역으로는 가능한가?
+- Mac주소를 통해서 IP를 얻을 수 있는데, 역으로는 가능한가? 2개로 추정
 
 # IP Address
 - IPv6는 128bits를 사용하므로, 8개의 16bits Integers로 작성
@@ -49,9 +49,10 @@
 
 - 처음 Local Host를 뜻하는 주소는 ::1로, loop back 주소
 - 첫 4개는 사설주소이고, 6번째는 2001:~~ 이다. 첫 숫자가 2(001)이 나왔다는 것은 global unicast라는 의미
+- fc~fd로 시작하면 사설 
 
 1111 1110 10 – link local
-1111 1111 11 – site local
+1111 1110 11 – site local
 1111 1111 – multicast
 
 ![alt text](image-5.png)
@@ -63,6 +64,7 @@
 - IPv4에서는 destination ID를 사용할 때, 224.0.0.1과 224.0.0.2를 중요하게 사용하는데, IPv6도 비슷함
 - ff02::1 (모든 IPv6 인터페이스)
 - ff02::2 (모든 IPv6 라우터 인터페이스)
+- ![alt text](image-10.png)
 
 ## SNM
 - IPv6에서 중요한 Multicast address인 SNM(Solicited-node multicast)는 ARP를 대용하기 위한 address
@@ -88,4 +90,17 @@
 - ::은 this machine
 - ::1은 loopback 주소를 나타냄
 
-## IPv6 Multicast address
+## IPv6 Header
+- Fragment는 host만 가능
+- Fragment하려면 header를 추가해서 가능
+- Option 추가한 걸 찾아가는 Next Header
+- ![alt text](image-11.png)
+- header 40bytes
+- ![alt text](image-12.png)
+
+# Extension header
+- ![alt text](image-13.png)
+
+# IPv4 vs IPv6
+- No fragmentation - router는 못하고, host만 가능
+- No checksum

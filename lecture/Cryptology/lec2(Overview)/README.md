@@ -35,7 +35,7 @@
 - # **brute-force attack**
 - key의 bit수가 많아질수록 시간이 엄청나게 걸리기 때문에 어려움
 
-## More Definition
+# More Definition
 - **Unconditional security**는 절대 깨지지 않는 암호로, 암호의 이상적인 모습이지만 불가능
 - **Computational security**는 계산은 가능한데, 현실에서는 시간이 부족해서 해결을 못하도록 하는 방식
 - 현재 가장 흔하게 사용하는 128bits key는 **Computational security** 방식이다
@@ -49,7 +49,7 @@
 - 영어에서도 흔히 사용되는 글자가 있고, 사용이 잘 되지 않는 글자가 있음
 - 결론적으로, **언어의 통계**가 있기 때문에 안전하지 않음
 
-- **Monoalphabetic Ciphers**가 안전하지 않은 이유는, 글자를 바꿔도 원래 글자의 빈도수가 바뀌지 않기 때문
+**Monoalphabetic Ciphers**가 안전하지 않은 이유는, 글자를 바꿔도 원래 글자의 빈도수가 바뀌지 않기 때문
 
 **Polyalphabetic Ciphers**는 각 글자마다 다른 Rotor Machine(table)을 사용해서 통계가 잡히지 않도록 하는 방식으로, 통계가 잡히지 않아서 보안이 좋음
 - Rotor Machine에는 Hagelin과 Enigma가 존재
