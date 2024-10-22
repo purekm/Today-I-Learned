@@ -21,7 +21,8 @@
 
 ## ARP
 - IP 주소만으로는 데이터 전송이 불가하므로, Mac Address를 찾아야함
-- Mac address는 ARP(Broadcast)를 통해서 찾음
+- Mac address는 ARP(Broadcast)를 통해서 찾음 (20분동안 정보가 유지됨)
+- 이미 상대방의 Mac address 알때, arp table을 업데이트시키기 위해 unicast로 arp request를 보내는 경우도 있음
 ![alt text](image-5.png)
 Ethernet frame의 broadcast는 ffffffffffff지만
 ARP packet에서는 Target Mac address를 000000000000으로 한다.
@@ -29,6 +30,11 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 ![alt text](image-6.png)
 - Ethernet frame은 body에 46bytes가 최소한으로 들어가야 하므로, ARP packet 또한 이 format을 따라야 함. 그러므로 28bytes의 body를 채웠으므로 남은 18bytes를 padding으로 채움.
 
+- ![alt text](image-8.png)
+- ethernet frame에는 broadcast이기 때문에 ffff~로 destination이 적혀있고, ARP request에는 상대방의 mac address를 모르기 때문에 destination Mac이 0000으로 채워짐
+
+- ARP table에는 <Ip,MAC>의 쌍으로 존재
+**Sequence**는 IP테이블 참조 후, 서브넷이 있으면 그냥 ok, 없으면 default gate ip를 참조해서 arp 
 - QA: ARP table을 내가 request하지 않아도 업데이트 될 수있을까?
 - -> G-ARP로 인해 업데이트 가능
 
@@ -63,6 +69,8 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 - Source IP를 0.0.0.0으로 설정하고 보냈을 때, 응답이 있으면 충돌 없으면 ARP
 - reply를 할 수 있는 이유는 MAC으로 통신하기 때문
 
+![alt text](image-9.png)
+- ARP announcement의 dest IP는 자신의 IP로 설정해서 보냄
 - ARP Poisoning, Spoofing 을 방지하려면, 라우터가 주기적으로 ARP request를 반복하여 A,C가 랜덤하게 업데이트 됨.
 - 라우터는 A와 C에게 번갈아가면서 보내게 되는데, 결국 C가 피해를 받음.
 
@@ -77,6 +85,8 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 ## Directed ARP
 - unicast로 요청
 - ARP Packet의 request Target Mac 주소는 0000000... 으로 항상 보냄
+- frame의 Destination은 unicast이기 때문에 상대방의 MAc
+- ![alt text](image-10.png)
 
 ## ARP Vulnerability
 - ARP의 request와 reply는 오염될 수 있음.

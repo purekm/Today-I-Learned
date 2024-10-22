@@ -197,3 +197,6 @@ Inheritance hierarchy를 만들 때, 어떤 방식으로 만들까?
 - 하나의 객체가 multi(Poly) + form(Morphism)을 가질 수 있음
 - Message sender의 입장에서 receiver가 누구냐에 따라서, 다르게 행동할 수 있음
 
+# Dynamic dispatch
+- 실제는 dynamic하게 결정
+

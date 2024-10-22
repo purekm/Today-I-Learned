@@ -78,6 +78,7 @@
 
 # 특징
 - **primitive root**는 모든 숫자를 생성함.
+- 1이 a^pi(n)보다 먼저 나오면, 모든 숫자를 생성하지 않음
 
 ## Discrete Logarithms
 ![alt text](image-12.png)

@@ -102,7 +102,7 @@ Seed length = key length + output(input) block length
 - ![alt text](image-10.png)
 i부터 0까지 섞고, 한 바이트 씩 암호
 
-RC4
+# RC4 Security
 -	결과가 매우 non-linear해서 잘 사용 했었음
 -	절대 같은 key 재사용 X
 -	지금은 안전하지 않음

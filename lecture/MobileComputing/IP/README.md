@@ -55,7 +55,8 @@
 - ping을 보냈는데, 응답으로 TTL=39가 왔음. TTL이 25정도 줄어있다는 사실을 알 수 있으며, 25hop을 통해서 전달되었다는 사실도 알 수 있음
 
 # checksum
-
+- ![alt text](image-4.png)
+- offloading기능을 키면 모든 checksum을 NIC에서 대신 처리함.
 # Routing table
 ![alt text](image-3.png)
 - 127.0.0.1 은 loop back interface
@@ -63,3 +64,5 @@
 - 연결됨은 해당 네트워크가 로컬 네트워크와 이미 연결되어 있음을 나타냄. router를 통하지 않고 직접 전송
 
 - ip spoofing -> ingress filtering으로 방지 가능
+- ingress filtering은 인터넷에서 사용하지 않는 IP 대역을 필터링하는 방식
+

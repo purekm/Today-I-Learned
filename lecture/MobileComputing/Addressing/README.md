@@ -83,7 +83,7 @@
 # Subnetting Advantages
 
 - Network, Subnet, Host 로 3계층 구조를 가짐
-- 시스템 자체의 complexity는 증가하지 않음
+- host를 추가할 때, 많은 router에 업데이트할 필요가 없음
 - router의 complexity가 줄어듦. 여러 개의 라우터를 신경쓰지 않아도 되니까.
 
 
@@ -135,3 +135,4 @@ Host가 4bit이므로 총 16명. 그러면 host가 192~207까지인데, 끝과 �
 # Convention
 - default 게이트웨이 주소는 관례적으로 호스트 번호가 1로 설정 
 설계에 따라 다를 수 있음.
+

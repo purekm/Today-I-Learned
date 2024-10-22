@@ -7,6 +7,8 @@
 # Protocol 
 ![alt text](image.png)
 - Layer 4,5 는 software protocol, 나머지는 hardware protocol
+- Syntax : data encoding, language
+- Semantics : Error handling, termination, ordering of request
 ## Interface 
 - **interface** 는 네트워크에서 통신을 가능하게 하는 장치 또는 layer 간의 연결 점(SAP)
 OS에서는 기본적으로 여러 interface에 대한 protocol rules 을 가지고 있음. interface(Ethernet에서 접속하는 protocol과 wifi protocol)가 다르니까 그걸 OS가 조절 
@@ -32,6 +34,8 @@ OS에서는 기본적으로 여러 interface에 대한 protocol rules 을 가지
 - **LAN** 상에서는 Data Link layer에 Sublayer로 Media Access Control layer을 가짐 
 ![alt text](image-1.png)
 
+**PDU**는 해당 계층의 header를 포함한 크기
+**MTU**는 해당 계층의 header를 포함하지 않고, 보낼 수 있는 데이터의 최대 크기
 ## Functions of Layer
 # Data Link Layer - Reliable frame transfer
 - Framing
