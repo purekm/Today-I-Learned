@@ -6,7 +6,7 @@
 - ![alt text](image.png)
 
 # Object란 무엇인가?
-- 주변에 있는 것 중에서 사물이든 개념이 되었든, 확실한 경계가 있고, 고유한 의미가 있어야함(같은 펜 두개가 있어도 객체가 두개 있는 것)
+- 주변에 있는 것 중에서 사물이든 개념이 되었든, 확실한 경계가 있고, 고유한 의미가 있어야 함(같은 펜 두개가 있어도 객체가 두개 있는 것)
 - 경계가 애매한 것은 Identity가 있으면 object로 정의할 수 있음
 - Identity를 정의할 때는 구분할 필요가 있는지 없는지에 대한 것이 중요
 - 구분할 필요가 없는 것은 attribute (같은 5만원권이 있으면 상관없잖아)
@@ -119,10 +119,10 @@ Inheritance hierarchy를 만들 때, 어떤 방식으로 만들까?
 - - 하나의 class안에 이름이 같은 메소드를 여러 개 define
 - - int add(a,b) , int add(a,b,c) 처럼 이름은 같아도 구분은 할 수 있어야 하니까 signature중 무언가를 바꿈(Type or parameter)
 
-# is a relation
+# Is a relation
 - Student is a Person, 역은 성립하면 안됨
 - 부모는 포괄적인 개념, 자식은 전문화된 개념
-- **is a**relationship 강화
+- **is a** relationship 강화
 - - ***부모가 할 수 있는 일은 자식도 다 할 줄 알아야 함***
 - - ***부모를 사용할 수 있는 곳이면, 자식이 대신 할 수 있어야 함 (LSP-Liskov Substitution Principle)***
 

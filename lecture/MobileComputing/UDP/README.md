@@ -5,14 +5,14 @@
 # E2E Principle
 - Functionality Guide로, 각각의 layer가 제공하는 기능
 - Application은 end host에만 있어야 함
-- 엄청나게 성능을 향상 시킬게 아니면 상위 layer에서 구현
+- **엄청나게 성능을 향상 시킬게 아니면 상위 layer에서 구현**
 - router의 간섭없이 소통하는게 편하기 때문에 상위 layer에 function 구현
 - **망 중립성** - 네트워크를 의도를 가지고 조작하면 안됨
 
 ## Transport Protocol
 # UDP
 - Datagram oriented
-- Unreliable, connectionless
+- Unreliable, **connectionless**
 - Unicast, Multicast
 - Non-unicast, realtime, short transactions 용도로 사용
 
@@ -20,8 +20,10 @@
 - IP header에 있는 message length를 통해서 UDP의 message length 유추 가능 (IP Total length - IP Header length)
 - IPv4에서는 optional, IPv6에서는 mandatory(필수)
 - checksum할 때 계산할 내용이 많이 없어서, 수도 헤더를 추가해서 계산
+- ![alt text](image-4.png)
 - - ![alt text](image.png)
 
+- ICMP port unreachable이 발생하면, ICMP에서 UDP header을 가져감 
 # checksum 계산하는 방법
 - ![alt text](image-1.png)
 - ![alt text](image-2.png)
@@ -38,4 +40,4 @@
 - ![alt text](image-3.png)
 - - UDP로 보내서, port unreachable을 통해 ICMP을 받아서 traceroute
 - - well-known 은 하위 10비트
-- - 
+
