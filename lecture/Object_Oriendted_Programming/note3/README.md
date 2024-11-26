@@ -16,7 +16,7 @@
 - 구조적인 특징을 나타냄
 - Static Models만 보고는 Model이 어떻게 운영되는지 알기 어려움
 
-# Dynamic Models (Interatction Diagram)
+# Dynamic Models (Interaction Diagram)
 - ![alt text](image-3.png)
 - 행동적 특징을 나타냄
 - Dynamic을 통해 어떻게 동작하는 지 알아야 함

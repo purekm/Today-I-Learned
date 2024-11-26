@@ -128,7 +128,7 @@ Inheritance hierarchy를 만들 때, 어떤 방식으로 만들까?
 
 # interface inheritance
 - ![alt text](image-22.png)
-- ineritance의 목적은 interface의 공유
+- inheritance의 목적은 interface의 공유
 - interface의 공유 목적으로 사용할 때는 supertype, subtype로 분류 가능
 
 # implementation inheritance

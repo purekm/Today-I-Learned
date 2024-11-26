@@ -47,7 +47,7 @@
 
 - 프로그래밍하기전에 디자인이 완벽하게 설계될 것이라고 생각함
 
-# Colclusion
+# Conclusion
 - **waterfall** 방식 더 이상 좋지 않음
 - **iterative development**로 좋아지는 과정을 겪어야 함 - 여러번의 작은 watterfall을 겪음
 - 다룰 수 있는 부분만 다뤄서 피드백도 여러 번 받는 이 방법을 여러 번 해서 완성시킴
