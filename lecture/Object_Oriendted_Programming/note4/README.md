@@ -56,14 +56,16 @@
 - Use-case는 여러 instance의 집합이며, instance는 눈에 보이는 결과가 있어야 함
 
 ## Black-Box vs White-Box 
+
 # Black-Box Use Case
 - System Usecase
 - describes functional requirements
-# While-Box Use Case
+# White-Box Use Case
 - Business Usecase
 - describes operations of the business
 
 ## Use Case Format
+
 # Brief format
 - Main success scenario만 제시
 # Casual format
@@ -128,12 +130,12 @@
 
 
 ## UC 에서 중요한 4가지 concept
-# level : Why do we want this goal?
+**level** : Why do we want this goal?
 - 금액 입력 → 현금을 인출 → 점심을 사기 위해
-# Scope : Which system boundary do we mean?
+**Scope** : Which system boundary do we mean?
 - 시스템 또는 프로세스의 경계를 명확히 정의
-# Detail : Do we describe intent, or action detail?
-# Primary Actor : Who has this goal?
+**Detail** : Do we describe intent, or action detail?
+**Primary Actor** : Who has this goal?
 
 # Level of UC
 - ![alt text](image-3.png)
