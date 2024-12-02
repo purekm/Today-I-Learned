@@ -53,7 +53,7 @@
 - - getData() : CarData 는 CarData형 반환
 - - drive(speed : int = 0) : speed 값을 parameter로 받음
 - - getCarCount() : int 는 int 형 반환 
-- 밑줄이 있는 경우 instance, 없으면 class member(static)
+- 밑줄이 없는 경우 instance, 있으면 class member(static)
 
 # How to make System Sequence Diagram
 - 외부 actor와의 상호작용을 선으로 그림
