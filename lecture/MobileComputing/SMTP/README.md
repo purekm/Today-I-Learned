@@ -51,3 +51,6 @@
 - 아스키 코드가 아닌 데이터를 아스키 코드로 변환하고 client MTA에 전송
 - MIME를 통해 다시 원래의 아스키 코드가 아닌 데이터로 변환되서 전송
 - ![alt text](image-8.png)
+
+# MIME Header
+- ![alt text](image-9.png)
