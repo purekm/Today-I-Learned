@@ -75,7 +75,7 @@
 **brief to Fully 방식으로 흘러가는게 좋음**
 
 ## Usecase is behavioral part of contract between various stakeholders
-- action or interaction between to actors with goals
+- action or interaction between two actors with goals
 - 시스템이 내부적으로 수행해야하는 작업으로, to protect stakeholders with interests
 - actor와 actor 사이의 interaction
 - actor는 목표 달성을 위해 행동하거나 다른 actor를 지원.
