@@ -1,0 +1,585 @@
+## 리눅스 시스템 관리
+1. 리눅스 시스템에서의 사용자 관리
+- 숫자값 형태의 UID로 관리
+- UID는 0번부터 정수값으로 배분
+- root는 0
+- CentOS7부터는 1000번부터 할당
+- 사용자 계정 정보는 /etc/passwd 파일에 기록됨
+
+2. root 계정 관리
+- root 계정 이외에 슈퍼유저가 존재하는지 점검
+- PAM을 이용하여 root 계정으로 직접 로그인을 제한
+- 원격로그인 통제
+- TMOUT을 통해 무의미한 장시간 로그인 방지
+- 관리자도 일반 계정으로 로그인 후 root 권한 획득
+- 일반 사용자에게 특정 명령어 권한만 할당할 경우 su 보다는 sudo 이용
+
+3. useradd : 사용자 계정 생성
+- 새로운 사용자 ID를 생성하는 명령어
+- root 권한자가 사용자 계정을 생성할 때 사용 (adduser도 가능)
+- 기본 설정 정보는 /etc/default/useradd에서 가져옴
+- 생성된 사용자 정보는 /etc/passwd, /etc/shadow에 기록됨
+
+
+-g [그룹] : 특정 그룹을 지정하여 사용자 추가 (해당 그룹이 미리 생성되어 있어야 함)
+옵션 미지정 시: RedHat 계열 : 사용자 ID와 동일한 그룹이 자동 생성되어 포함됨
+다른 배포판 : users 그룹에 포함됨
+-G [그룹1,그룹2] : 기본 그룹 외에 추가로 다른 그룹에도 속하게 함
+-D : /etc/default/useradd에 설정된 기본 사항을 확인
+-u [UID] : 사용자 추가 시 특정 UID 값을 지정
+
+기본 설정 확인 (useradd -D 실행 결과 예시)
+GROUP=100
+HOME=/home  # 사용자 홈 디렉터리 기본 위치
+INACTIVE=-1  # 비활성화 기간 (-1: 설정 없음)
+EXPIRE=      # 계정 만료 날짜 (예: '2020-12-21' 등)
+SHELL=/bin/bash  # 기본 셸 설정
+SKEL=/etc/skel  # 홈 디렉터리 생성 시 기본 스켈레톤 디렉터리
+
+4. passwd : 사용자 암호 설정 및 변경
+등록된 사용자 계정의 암호를 설정하거나 변경하는 명령어
+
+passwd : 현재 로그인한 사용자의 암호 변경
+passwd [사용자명] : 다른 사용자의 암호 변경 (root 권한 필요)
+
+5. su (substitute user) : 사용자 전환
+로그인된 상태에서 다른 사용자의 권한으로 셸을 실행할 때 사용
+일반 사용자가 root로 전환할 때 주로 사용됨
+
+su [사용자명] : 해당 사용자로 전환 (환경 변수는 기존 사용자의 것을 유지)
+su - 또는 su -l : 실제로 로그인한 것처럼 전환 (환경 변수까지 완전히 적용)
+
+# 사용자 관련 파일 및 디렉터리
+1. /etc/passwd
+- 시스템에 로그인하여 자원을 이용할 수 있는 사용자의 목록을 저장하고 있는 정보 파일
+- 콜론(:)을 구분자로 사용
+- ID, 개인의 홈 디렉터리 등 7개의 기본 정보
+- /etc/passwd의 패스워드를 다시 암호화 하여 /etc/shadow에서 추가로 관리
+- 기본 구조(username:password:UID:GID:fullname:home-directory:shell)
+- username : 사용자명 / ex. posein
+- password : 패스워드(암호화되어 /etc/shadow에서 별도 관리)
+- UID : 사용자 아이디 / root라면 0
+- GID : 그룹 아이디
+- fullname : 사용자 관련 추가 정보
+- home-directory : 홈 디렉터리 절대 경로
+- shell : 로그인 시 사용하는 셸
+- 계정 사용 일시적으로 불가능하게 하려면 /etc/passwd 파일의 shell 부분 삭제
+- 계정 서비스 보류 : /etc/passwd 파일의 password 필드를 “*”로 변경
+
+2. /etc/shadow
+- /etc/passwd의 2번째 필드인 패스워드 부분을 암호화하여 관리
+- 패스워드 만기일, 계정 만기일 등 9개의 필드
+- 오직 root만 접근 가능
+- 그룹명은 알 수 없음
+- 기본 구조(username:password:last:may:must:warn:expire:disable:reserved)
+- last : 가장 최근에 패스워드 바꾼 날
+- may : 패스워드 바꾼 후 최소로 사용해야 하는 날짜수 / 다른 패스워드로 변경 가능하기까지의 유예 기간 0 : 언제든 변경 가능
+- must : 현재 사용 중인 패스워드의 최대 사용 가능 기간 / 현재 패스워드 유효 기간 99999 : 패스워드를 변경하지 않고 계속 사용 가능
+- warn : 패스워드 사용기한 만료 전 사용자에게 바꿀 것을 경고하는 기간
+- expire : 패스워드 사용기한 만료 후 실제 계정 사용이 불가능해지기까지의 기간 / 일종의 유예 기간
+- disable : 계정 만기일로부터 계정 사용 불가능하게 된 날 또는 불가능하게 되는 날
+- reserved : 공백 / 아직 사용X
+
+- pwunconv : 사용자의 패스워드를 /etc/passwd에서 관리하려면 실행
+
+- pwconv : 사용자의 패스워드를 다시 /etc/shadow에서 관리하려면 실행
+
+- pwchck(password check)
+- 사용자 관련 파일인 /etc/passwd와 /etc/shadow 점검
+- 각 사용자의 필드 개수 검사, 아이디 중복 유무 검사, 유효한 사용자 여부 검사, 유효한 UID 및 GID 여부
+
+3. /etc/default/useradd
+- 별도의 옵션 없이 ‘useradd 사용자명’으로 계정 생성 시 기본적으로 적용되는 설정이 들어있는 파일
+- 사용자 추가 시에 생성되는 홈 디렉터리를 /home2 디렉터리의 하위 디렉터리로 생성되도록 설정
+
+4. /etc/login.def
+- 메일 디렉터리
+- 패스워드 관련 설정(최대 사용기한, 최소 사용기한, 최소 길이, 만기 이전 경고 주는 날짜)
+- UID 최소값 및 최대값 : UID_MIN, UID_MAX
+사용자 계정에 부여되는 UID 값을 1000번부터 할당되도록 설정할 때 이용
+- GID 최소값 및 최대값
+- 홈 디렉터리 생성 여부
+- 기본 UMASK 값 설정
+- 패스워드에 적용하는 암호화 알고리즘
+
+5. /etc/skel
+- 사용자 추가 시 기본적으로 제공되는 파일이나 디렉터리가 위치
+- useradd가 새로운 계정 생성 시 /etc/skel 디렉터리 사용자들이 사용자의 홈 디렉터리로 자동 복사됨
+
+# 사용자 계정 관리 명령어 2
+1. usermod : 사용자 계정 관리
+- 사용자의 셸, 홈 디렉터리, 그룹, UID, GID 등 변경
+- 사용자 관련 대부분의 정보 변경 가능
+-d : 사용자의 홈 디렉터리 변경
+-g : 사용자의 그룹 변경
+-s : 사용자의 셸 변경
+-u : 사용자의 UID 값 변경
+-e : 계정 만기일 변경(YYYY-MM-DD 또는 YYYY/MM/DD)
+-f : 패스워드 만기일이 지난 후 패스워드에 Lock 설정할 유예 기간 지정
+-G : 추가로 다른 그룹에 속하게 함
+-l : 사용자 아이디 변경
+-L : 사용자의 패스워드에 잠금을 걸어 로그인 제한
+(/etc/shadow의 2번째 필드 맨 앞에 ! 붙여서 로그인 제한)
+* usermod -d /home2/posein -m posein : posein 사용자의 홈 디렉터리를 /home2/posein으로 변경(/home2는 미리
+생성되어 있어야 함)
+usermod -g terran drone : drone 사용자의 그룹을 terran으로 변경
+usermod -l yuloje posein : posein 아이디를 yuloje로 변경
+
+2. userdel : 사용자 삭제
+- 사용자 계정 삭제
+- /etc/passwd나 /etc/group 파일에서 직접 제거해도 무방
+- 옵션 없이 실행 시 /etc/passwd 및 /etc/shadow에 등록된 정보가 삭제되면서 사용자는 제거되지만, 홈
+디렉터리 및 관련 파일들은 제거 되지 않음
+-r : 사용자의 홈 디렉터리 및 메일 관련 파일까지 제거
+
+# 사용자 패스워드 관리
+1. passwd
+- 기본적으로 패스워드 부여 및 변경
+- 계정 사용하지 못하게 하거나 패스워드 만기일 및 유효기간 등 설정 가능
+- 일반 사용자도 passwd 명령 실행 가능(Set-UID가 설정된 파일 / 소유자 권한 자리의 x -> s)
+-l : 사용자의 패스워드에 잠금 걸어 로그인 제한
+-u : 사용자에게 설정되어 있는 잠금 해제
+-d : 사용자 패스워드 제거 / 패스워드 없이 로그인 가능
+(/etc/shadow의 2번째 필드인 패스워드 부분 내용 삭제 / 아이디만 입력하면 로그인 됨)
+-n : 패스워드 변경 후 최소로 사용해야 하는 날짜수 지정
+-x : 현재 패스워드의 유효기간 설정 / 패스워드 최대 사용 가능 날짜수
+-w : 패스워드 만료 전 경고 날짜 지정
+-e : 다음 로그인 시 반드시 패스워드 변경하도록 설정
+(/etc/shadow의 3번째 필드 값이 0으로 설정)
+
+
+2. change
+- 사용자의 패스워드에 대한 정보 출력 및 설정
+- /etc/shadow의 날짜 관련 필드 설정을 모두 할 수 있는 명령
+-m : 패스워드 변경 후 사용해야 하는 최소 날짜 수 지정
+-M : 한 번 설정한 패스워드의 만기일 지정 / 패스워드 변경 없이 사용 가능한 최대 날짜 지정
+-l : 패스워드 최대 사용 기간 만료 후 실제 패스워드에 잠금 설정하기까지의 유예기간 지정
+-E : 계정 만기되는 날 지정(MM/DD/YY 또는 YYYY-MM-DD형태로 지정)
+-W : 패스워드 만료 전 변경 요구하는 경고 날짜 지정
+
+change -M 30 -W 5 -m 7 ihd
+- 최소 30일에 1번 씩 패스워드 변경
+- 만료 5일 전 경고
+- 변경한 패스워드는 최소 7일 간 유지
+
+
+3. 사용자 패스워드에 사용되는 암호화 알고리즘 및 관련 명령어
+- MD5 : single 모드 부팅을 제한하기 위한 grub 패스워드 설정 시 사용하는 암호화 알고리즘
+- md5crypt : 패스워드 암호화 시 사용하는 명령어
+- password --md5 : GRUB 패스워드 변경 시 사용 / 암호화된 패스워드 설정 시 사용
+
+# 그룹 계정 관리 관련 파일 및 명령어
+1. /etc/group
+- 기본 구조(GroupName:Password:GID:Member_List)
+- GroupName : 그룹 이름 . 보통 groupadd 명령으로 생성한 그룹명
+- Password : 대부분 리눅스 배포판에서는 그룹 패스워드도 /etc/gshadow에서 별도로 관리 / 별도로 관리되는경우, ‘x’라고 표기
+- GID : 그룹 아이디
+- Member_List : 해당 그룹에 속한 사용자의 아이디
+- grpck : 사용자 관련 파일인 /etc/group, /etc/gshadow 점검
+- 각 그룹의 필드 개수 검사, 그룹 중복 유무 검사, 유효한 그룹 여부 검사, 유효한 GID 여부 검사, 그룹 멤버와관리자 검사 등
+
+2. groupadd : 그룹 생성
+3. groupmod : 그룹 변경
+4. groupdel : 생성된 그룹 삭제
+- 삭제 시 그룹에 속한 사용자가 없어야 함
+- 2차 그룹으로 속한 사용자들은 존재해도 무방
+
+5. gpasswd : 그룹의 패스워드 설정
+- gpasswd -A posein terran : terran 그룹의 관리자로 posein 지정 / 관리자 등록은 /etc/gshadow 3번째 필드에 기록
+- Gpasswd terran : terran 그룹의 관리자인 posein이 그룹 패스워드 지정
+
+6. newgrp : 사용자가 일시적으로 1차 그룹 변경
+
+# 사용자 관련 명령어
+1. users : 시스템에 로그인 되어 있는 사용자 아이디 출력 / 아이디 일렬로 나열
+2. who : 시스템에 로그인 되어 있는 사용자 출력
+-m : 현재 사용 중인 표준 입력과 연관된 호스트명 및 사용자명 출력
+3. whoami : 실질적으로 사용 중인 권한자 출력 (who -m == whoami)
+4. w : 시스템에 로그인 되어 있는 사용자와 사용자가 수행 중인 작업(WHAT) 출력
+5. id : 시스템에 등록된 아이디에 대한 정보 출력
+6. lslogins : 시스템 전체 사용자의 정보를 출력
+- /etc/passwd, /etc/shadow 뿐만 아니라 로그 파일(wtmp, btmp)에서도 관련 정보 가져와 출력
+
+1. chmod (change mode) - 파일 및 디렉터리 권한 변경
+
+1) 권한 표기 방식
+읽기 (r - 4), 쓰기 (w - 2), 실행 (x - 1)
+사용 대상 :
+u : 사용자(Owner)
+g : 그룹(Group)
+o : 기타 사용자(Other)
+a : 모든 사용자(All, ugo 포함)
+
+2) 권한 설정 방법
+(1) 기호 모드 (Symbolic Mode)
++ : 권한 추가
+- : 권한 제거
+= : 특정 권한만 설정
+, : 여러 사용자 계층에 대해 권한을 동시에 변경
+chmod g+w,o-x file.txt   # 그룹에 쓰기 권한 추가, 기타 사용자 실행 권한 제거
+
+(2) 숫자 모드 (Octal Mode)
+8진수 조합 사용 (r=4, w=2, x=1, 권한 없음=0)
+여러 권한을 합산하여 3자리(ugo) 또는 4자리(특수권한 포함)로 설정
+chmod 750 script.sh   # 소유자: rwx(7), 그룹: rx(5), 기타: 없음(0)
+
+3) 옵션
+-R : 하위 디렉터리를 포함하여 권한 변경
+chmod -R 755 /var/www  # /var/www 및 내부 모든 파일, 디렉터리에 권한 적용
+chown (change owner) - 파일 소유권 변경
+
+
+3. umask - 파일 및 디렉터리 생성 시 기본 권한 설정
+1) 기본 개념
+파일 생성 시 기본 퍼미션은 666 (rw-rw-rw-)
+디렉터리 생성 시 기본 퍼미션은 777 (rwxrwxrwx)
+umask 값에 따라 기본 퍼미션이 달라짐
+
+umask 002   # 일반 사용자 환경에서 기본 설정 (디렉터리 775, 파일 664)
+
+2) umask 설정값 연산법
+파일 : 666 - umask 값
+디렉터리 : 777 - umask 값
+umask 값을 **비트 보수(NOT 연산)**한 후, 기본 퍼미션과 AND 연산 수행
+
+umask 002
+파일 : 666 - 002 = 664 (rw-rw-r--)
+디렉터리 : 777 - 002 = 775 (rwxrwxr-x)
+
+구분		    하드 링크 (Hard Link)		   심볼릭 링크 (Symbolic Link)
+
+i-node		   원본과 동일 (같은 i-node)	   원본과 다름 (다른 i-node)
+적용 대상	    파일만 가능			            파일 및 디렉터리 모두 가능
+디스크 공간	    추가 공간 사용 X (원본과 동일)	 원본의 경로 정보만 저장 (작은 크기)
+원본 삭제 시	링크는 정상 작동 (데이터 유지)	 링크가 깨짐 (Broken Link)
+링크 파일 권한	원본 파일과 동일			    l 표시 (lrwxrwxrwx)
+데이터 수정 시	모든 링크에 반영			    원본에만 반영
+윈도우 개념	    일반 파일 복사와 유사		    바로가기(Shortcut)
+
+디스크 인식 확인 : fdisk -l, lsblk
+파티션 생성 : fdisk 또는 parted
+파일 시스템 생성 : mkfs -t ext4 /dev/sdb1
+마운트 디렉터리 생성 : mkdir /mnt/newdisk
+마운트 : mount /dev/sdb1 /mnt/newdisk (확인 df -h)
+자동 마운트 설정 : /etc/fstab에 UUID 추가
+
+/etc/fstab : 부팅 시 마운트 설정을 저장하는 파일
+/etc/fstab 구성:
+
+<장치명> <마운트 디렉터리> <파일 시스템> <마운트 옵션> <덤프> <fsck>
+mount -a 로 /etc/fstab 적용 가능
+주요 마운트 옵션:
+defaults: 기본값 (rw, exec, auto, async 포함)
+noexec: 실행 파일 실행 금지
+ro / rw: 읽기 전용 / 읽기-쓰기
+usrquota: 사용자별 디스크 용량 제한
+
+명령어			                        설명
+xfs_repair /dev/sdX	                    XFS 파일 시스템 점검 및 복구
+df -hT			                        마운트된 디스크의 사용량 및 파일 시스템 확인
+du -sh			                        현재 디렉터리의 총 사용량 확인
+du -h --max-depth=2	                    특정 깊이의 하위 디렉터리까지 크기 표시
+dd if=/dev/sda of=/mnt/backup.img bs=1M	디스크를 이미지로 백업
+parted /dev/sdb	G	                    PT 방식의 파티션 생성
+partprobe /dev/sdb	                    변경된 파티션 정보 반영
+stat file.txt		                    파일의 타임스탬프 및 상세 정보 확인
+
+# Swap 명령어
+1. swap : RAM 이 부족하면 하드 디스크 일부를 메모리처럼 사용하게 해주는 기술
+2. mkswap : 스왑 파티션이나 스왑 파일 생성
+3. swapon : 스왑 파티션이나 스왑 파일 활성화 (-s : 스왑 영역 상태 출력)
+
+# 스왑 영역 만들기
+1. 스왑 파일 생성
+- 스왑 파일 생성(dd)
+- 스왑 파일 생성(mkswap)
+- 스왑 파일 활성화(swapon)
+- 시스템 부팅 시마다 사용할 경우 /etc/fstab 파일에 등록
+
+2. 스왑 파티션 생성
+- 스왑 파티션 생성(fdisk)
+- 스왑 파티션 생성(mkswap)
+- 스왑 파티션 활성화(swapon)
+- 시스템 부팅 시마다 사용할 경우 /etc/fstab 파일에 등록
+
+# Disk Quota와 관련 명령어
+1. 디스크 쿼터(quota) : 사용자 및 그룹의 디스크 사용량과 생성할 수 있는 파일 개수(i-node 수)를 제한 가능
+2. quotacheck : 파일 시스템 검사 / aquota.user과 같은 quota 기록 파일 생성
+3. xfs_quota : XFS 파일 시스템의 쿼터(quota)를 관리
+- User ID, Used, Soft, Hard, Warn/Grace
+
+# 사용자 쿼터 설정
+1. /etc/fstab 설정
+- /home의 4번째 필드에 사용자 쿼터 설정 옵션인 uquota(또는 usrquota)를 추가로 기입
+
+# 디렉터리 관련 명령어
+1. pwd(print working directory)
+- 현재 위치한 작업 디렉터리의 절대 경로 출력
+
+# 파일 관련 명령어
+1. ls(list) : 디렉터리 안의 내용 출력
+-a : 숨겨진 파일이나 디렉터리도 출력
+-l : 파일이나 디렉터리 정보를 한 줄씩 하나씩 출력
+-i : i-node 번호를 파일 또는 디렉터리명 앞에 출력
+* ls -ali : 디렉터리 안 숨겨진 파일을 포함한 모든 리스트 상세 정보를 i-node 번호와 함께 출력(맨 앞이 숫자) / grep 안됨
+
+2. rm(remove) : 파일 삭제
+-i : 삭제 시 질의를 할 때 사용
+-f : 존재 유무나 어떠한 메시지 없이 강제 삭제
+
+3. touch
+-t YYYYMMDDhhmm.ss	특정 시간으로 타임스탬프 변경
+-a	접근 시간(atime)만 변경
+-m	수정 시간(mtime)만 변경
+-c	파일이 존재하지 않으면 새로 
+
+4. file : 파일 종류 출력
+5. find : 현재 디렉터리부터 하위 디렉터리에서 주어진 조건을 토대로 파일 및 디렉터리를 찾아서 경로 출력
+-perm : 지정한 허가권 값을 갖는 파일이나 디렉터리를 찾음
+-perm 755 : 정확히 같은 권한을 가진 파일 및 디렉터리 전부
+-perm -6000 : SUID와 GUID를 동시에 갖는 파일이나 디렉터리
+-perm +6000 : SUID나 GUID 둘 중 하나 이상을 갖는 파일이나 디렉터리
+
+find /bin -perm +6000
+/bin 디렉터리에서 SUID나 SGID 중 하나라도 설정된 파일 검색
+
+-type : 지정한 파일 유형을 찾음
+-type d	디렉터리 검색
+-type f	일반 파일 검색
+-type l	심볼릭 링크 검색
+
+-exec : 찾아진 파일 등과 연계하여 어떤 명령을 내릴 수 있는 옵션
+결과값은 { } 기호로 표시하고 \;로 끝내야 함
+2>/dev/null : (옵션은 아니지만) 맨 뒤에 사용하면 접근 권한이 없는 파일이나 디렉터리에 접근 시 나오는
+
+# 텍스트 파일 관련 명령어
+cat a.txt → 파일 내용 출력
+cat file1.txt file2.txt → 여러 파일을 연결하여 출력
+cat a.txt > b.txt → a.txt 내용을 b.txt에 저장 (덮어쓰기)
+cat b.txt >> a.txt → b.txt 내용을 a.txt에 추가 (덮어쓰지 않음)
+cat -n myfile.txt → 줄 번호 포함하여 출력
+cat -A myfile.txt → 출력되지 않는 문자(탭, 줄바꿈 등) 표시
+cat -s myfile.txt → 연속된 빈 줄을 하나로 압축하여 출력
+
+head : 텍스트 파일의 첫 부분 출력
+- 옵션 없이 사용 시 기본 10줄 출력
+-n 행수 : 파일의 앞에서부터 지정된 수만큼 출력(보통 ‘n’은 생략)
+* 예문
+- 10줄인 텍스트 파일의 4번째 줄부터 7번째 줄까지 출력 : head -7 lin.txt | tail -4 (앞 7줄 출력한 것 중에 마지막 4줄만 출력)
+- 30줄인 텍스트 파일의 11번째 줄부터 20번재 줄까지 출력 : head -n -20 lin.txt | tail
+
+3. more : 텍스트 파일의 내용이 긴 경우 화면(page) 단위로 출력
+- 커서를 이용하여 상하좌우 이동 가능
+
+4. grep(Global Regular Expression Print)
+-c	일치하는 줄 개수 출력 (count)
+-i	대소문자 구분 없이 검색 (ignore case)
+-v	일치하지 않는 줄 출력 (invert match)
+-E	**여러 패턴을 동시에 검색 ` (Extended regular expression)
+-n	검색된 줄의 줄 번호 출력 (number)
+
+5. wc(word count) : 텍스트 파일의 행(line) 수, 단어(word) 수, 문자(Byte) 수 출력
+- \도 문자 개수에 포함
+* $ cat joon.txt
+I love linux
+I love windows
+$ wc joon.txt
+2 6 28 joon.txt
+
+6. sort
+sort numbers.txt 실행 결과 (ASCII 순 정렬)
+1
+10
+20
+3
+5
+
+sort -n numbers.tx
+1
+3
+5
+10
+20
+-r 은 역순 출력
+
+
+sort -n -k 2 sample.txt
+Bob 22 175
+Alice 25 180
+Charlie 30 170
+
+sort -n -k 3 sample.txt
+Charlie 30 170
+Bob 22 175
+Alice 25 180
+
+7. cut : 데이터의 열(column) 추출
+cut -c 1-10 /etc/passwd
+/etc/passwd 파일에서 각 행의 1~10번째 문자만 출력
+
+
+8. split : 하나의 파일을 여러 개의 작은 파일로 분리
+9. tr : 텍스트 파일 안에 있는 임의의 문자(열)를 원하는 문자로 바꾸거나 제거
+- tr -o i < tr.txt : 해당 텍스트 파일의 ‘o’를 모두 ‘i’로 바꿔서 출력
+- tr a-z A-Z : 대소문자 전환
+
+10. sed(stream editor) : 파일의 내용을 변경 없이 화면상 출력만 필터링
+- sed (-i 사용시 파일 내용 변경) 's/apple/orange/g' file.txt         모든 apple -> orange
+- sed '1,3d'           file.txt 1~3번째 줄 삭제
+- sed -n '3p' file.txt             3번째 줄만 출력
+- sed -e 's/apple/orange/' -e '3d' file.txt       "apple"을 "orange"로 바꾸고 3번째 줄 삭제, -e 로 여러개의 옵션 사용
+
+11. awk : 패턴 검색 및 조작 시 사용
+- awk '{ print $1 }' file.txt		각 줄의 첫 번째 필드(열) 출력
+- awk -F: '{ print $1 }' /etc/passwd		/etc/passwd 파일에서 사용자명(1번째 필드)만 출력 (-F: 옵션으로 구분자 지정)
+
+## /proc
+새로운 프로세스 생성 시 /proc 디렉터리 안에 PID와 동일한 서브 디렉터리가 생성되고 그 안에 해당 프로세스에 관한 정
+보 저장
+1. /proc/PID의 구조
+- 프로세스 생성 시 PID가 1222로 할당되었다면 모든 정보는 /proc/1222 디렉터리 안에 기록
+- 주요 구성 요소
+- exe : 해당 프로세스를 실행시킨 명령어
+- fd : 파일 지정자에 대한 정보를 담고 있는 디렉터리
+
+2. /proc 디렉터리의 주요 정보 파일 및 디렉터리
+- cmdline : 부팅 시에 실행되는 커널 관련 옵션에 대한 정보
+- cpuinfo : CPU에 대한 정보
+- interrupts : 시스템에서 사용 중인 인터럽트 정보
+- mdstat : RAID 사용 시에 관련 정보 기록
+- meminfo : 물리적 메모리 및 스왑 메모리 정보 / 현재 커널이 운영하는 정보
+- partitions : 현재 활성화된 파티션 정보
+- swaps : 스왑 파티션 관련 정보
+- uptime : 시스템 가동 시간에 대한 정보 / uptime 명령어가 참조하는 파일
+ 
+# 프로세스 스케쥴링
+1. at : 지정한 시간에 원하는 명령이나 작업 실행될 수 있도록 해줌 / 1번 실행되는 경우에 주로 사용
+2. cron
+- root 권한으로 /etc/crontab에 등록해서 주기적으로 수행 가능
+- 기본 구성(minute hour day month weekday user-name command)
+
+# 프로세스 관련 명령어
+1. ps(process status) : 동작 중인 프로세스의 상태 출력
+- a : 터미널과 연관된 프로세스 출력
+- u : 프로세스 소유자 기준으로 출력
+- x : 데몬 프로세스처럼 터미널에 종속되지 않는 프로세스 출력 / 보통 a 옵션과 결합하여 모든 프로세스 출력
+- l : 프로세스 정보 길게 출력 / PRI와 NI 값 확인 가능
+-e : 모든 프로세스 출력
+-f : 유닉스 스타일로 출력(UID, PID, PPID 등이 함께 표시)
+ps aux | grep httpd : 웹 서버 데몬의 상태 확인(BSD)
+
+2. pstree : 프로세스의 상태를 트리 구조로 출력
+
+3. top : 동작 중인 프로세스의 상태를 실시간으로 화면에 출력
+- 실행 상태에서 다양한 명령을 입력하여 프로세스 상태 출력 및 제어 가능
+k : kill 명령 / PID 값 입력 시 종료 신호를 보냄
+r : nice 값 변경(프로세스 우선순위 변경)
+s : 화면 갱신 시간 변경
+M : 프로세스 RSS 값 정렬
+P : %CPU 값으로 정렬(기본값)
+
+4. kill : 프로세스에 특정 시그널 보내는 명령
+- kill %2 : 작업번호가 2인 프로세스 종료
+- kill -9 756 757 758 : PID가 756, 757, 758인 프로세스 강제 종료
+
+kill `pgrep httpd` 와 killall은 비슷함
+pgrep httpd
+"httpd" 프로세스의 PID(Process ID)를 반환
+여러 개의 httpd 프로세스가 실행 중이라면 모든 PID를 출력
+
+kill <PID>
+kill 명령어는 특정 PID를 종료
+pgrep이 반환한 모든 httpd PID에 대해 kill 실행
+
+5. killall : 같은 데몬의 여러 프로세스 한 번에 종료
+6. jobs : 백그라운드로 실행 중인 프로세스나 현재 중지된 프로세스 목록 출력
+7. fg : 백그라운드 프로세스를 포어그라운드 프로세스로 전환
+8. bg : 포어그라운드 프로세스를 백그라운드 프로세스로 전환
+
+9. nice : 프로세스의 우선순위 변경 / NI 값 설정
+nice --10 bash : bash의 NI 값을 -10만큼 감소시켜 우선순위를 높임
+nice bash 혹은 nice -10 bash : bash의 NI 값을 10만큼 증가시켜 우선순위를 낮춤 (값 안쓰면 10)
+
+10. renice : 실행 중인 프로세스의 우선순위 변경
+- 프로세스ID(PID), 사용자 이름, 프로세스의 그룹ID 이용
+- 주로 PID 사용 / 기존의 프로세스를 교체하여 지정
+$ renice 10 3508
+
+11. nohup : 사용자가 로그아웃하거나 작업 중인 터미널 창이 닫혀도 실행 중인 프로세스를 백그라운드 프로세스로 작업될
+수 있도록 해줌
+
+12. pgrep : 프로세스를 이름 기반으로 검색
+- PID 값 출력
+
+13. pkill : 프로세스명을 사용하여 특정 프로세스에 시그널을 보냄
+p가 들어가면 프로세스의 이름을 인자로 받는 경우가 많아용
+kill, renice 이런 애들은 PID를 받아용 
+
+## 리눅스 배포판
+배포판 			        기본 패키지 관리 기법 	온라인 패키지 관리 기법
+레드햇(RedHat) 계열 	RPM 			        YUM
+데비안(Debian) 계열 	Dpkg(, dselect, alien) 	apt-get(, synaptic, aptitude)
+수세(SuSE) 계열 		YaST 			        zypper
+
+1. 파일 형식(패키지이름-버전-릴리즈.리눅스버전.아키텍처.rpm)
+* ex) sendmail-8.12.8-6.ppc64.rpm
+- 패키지 이름 : sendmail
+- 패키지 버전 : 8.12.8
+- 패키지 릴리즈 : 6
+- 패키지 아키텍처 : ppc64(PowerPC 64 bit용 패키지)
+
+2. 설치 및 갱신(upgrade) 모드
+-i : 새로운 패키지 설치 시 사용 / 이전 버전의 같은 패키지가 있을 경우 설치X
+-U : 기존의 패키지를 새로운 버전의 패키지로 업그레이드할 때 사용 / 설치된 패키지가 없을 경우에도 새로운
+버전 설치 가능(이 경우엔 -i 옵션과 동일)
+-v : 메시지 자세히 출력(--verbose)
+-h : 설치 상황을 ‘#’ 기호 표시
+--rebuilddb : 특정 패키지 설치 후에 rpm 패키지를 검색했으나 나타나지 않을 때 rpm DB 업데이트 시 사용
+
+3. 제거(erase) 모드 : 의존성이 발생한 패키지 제거를 위해서는 먼저 의존성 관련 패키지 제거하거나, 추가로 --nodeps
+옵션 지정해야 함
+-e : 설치된 패키지 삭제 / 의존성을 갖는 패키지가 있는 경우 삭제X
+--nodeps : 의존성을 갖는 패키지가 존재하는 경우에도 삭제
+
+4. 질의(query) 모드
+-q : 질의 시 반드시 사용 / 패키지 이름과 버전만 표시
+-i : 설치된 패키지 정보 출력 / -p 옵션과 같이 사용 시 rpm 패키지 파일에 대한 정보 알 수 있음
+-l : 패키지에서 설치한 모든 파일 정보 출력 / -p 옵션과 함께 사용 가능
+-a : 시스템에 설치된 모든 패키지 목록 출력
+-p 패키지_파일명 : rpm 패키지 파일에 대한 정보 출력 / 패키지 파일의 정확한 이름 입력해야 함
+-f 파일명 : 지정한 파일을 설치한 패키지 이름 출력
+-c : 해당 패키지의 설정 파일이나 스크립트 파일 출력
+* rpm -qf /bin/ls : /bin/ls 파일을 설치한 패키지 정보 출력
+
+5. 검증(verify) 모드 : -V(--verify) 옵션 사용
+- rpm DB에 저장되어 있는 패키지의 메타데이터(metadata) 정보를 이용하여 변경된 정보를 찾아내는 모드
+
+6. 리빌드(rebuild) 모드 : rpmbuild
+
+## yum : rpm 기반(레드햇 계열)의 시스템에서 패키지를 손쉽게 설치해주고 자동으로 업데이트를 수행하는 명령행 기반 유틸리티
+
+1. 관련 파일 및 디렉터리
+- /etc/yum.conf : 환경 설정 파일
+- /etc/yum.repos.d : 설치 및 업데이트를 위한 저장소(repository) 관련 파일들이 저장되는 디렉터리 
+
+2. 사용법
+- yum -y : 모든 질의에 ‘yes’라고 답함
+
+# 데비안 패키지 관리(Debian Package Management)
+1. dpkg(Debian Package) : 데비안 패키지 관리 도구 / 명령어
+-i 패키지_파일명 : 패키지 설치 시 사용(--install)
+-R 디렉터리명 : -i 옵션과 함께 사용 / 지정한 디렉터리 안에 있는 패키지 설치 시 사용
+-l : 설치되어 있는 패키지 출력
+-L : 패키지가 설치한 파일 목록 출력(--listfiles)
+-r : 패키지 제거 / 환경 설정 파일 남겨둠(--remove)
+-P 패키지명 : 환경 설정 파일까지 전부 제거(--purge)
+-S 파일명 : 해당 파일을 설치한 패키지 이름 출력(--search)
+-s 패키지명 : 패키지에 대한 상태 출력(--status)
+* dpkg -i -R /usr/debian/stable/binary-i386/admin : 지정한 디렉터리 안에 있는 모든 패키지 설치 / -iR 도 가능
+
+소스코드 컴파일 순서
+1. 소스 설치법 : 압축 풀기 -> 디렉터리 이동 -> configure -> make -> make install
+- configure -> make -> make install 이 주요 3단계 
+
+cmake
+- configure + make로, make 과정을 수행하지 않고 지정한 운영체제에 맞는 make 파일의 생성을 목적으로 함(mysql)
