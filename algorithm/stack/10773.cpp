@@ -5,22 +5,19 @@
 using namespace std;
 
 int main(){
-    int k = 0;
+    int n;
     int sum = 0;
-    stack<int> stack;
-    cin >> k;
-    for(int i=0; i<k;i++){
-        int num = -1;
-        cin >>num;
-        if(num != 0){
-            stack.push(num);
-        }else{
-            stack.pop();
-        }
+    stack<int> s;
+    cin >> n;
+    for(int i=0; i<n; i++){
+        int num;
+        cin >> num;
+        if (num) s.push(num);
+        else s.pop();
     }
-    while(!stack.empty()){
-        sum = sum+stack.top();
-        stack.pop();
+    while(!s.empty()){
+        sum += s.top();
+        s.pop();
     }
     cout << sum;
     return 0;
