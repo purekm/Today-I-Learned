@@ -1,0 +1,18 @@
+Classification의 예
+1. 이메일의 스팸 여부 결정
+2. 온라인 쇼핑몰의 고객 계정들 중 해킹된 계정을 찾안는 문제
+3. 내일 날씨를 맑음,흐림,눈/비의 세 가지 중 하나로 예측하는 문제
+4. 유방암 악성 여부를 예측하는 문제
+
+Classification 직선 찾기
+직선에다가 값을 대입하고, 이에 대한 결과에 절대값사용
+Cost = | Score | 인데, Cost의 총합이 0이면 정확한 분류, 커질수록 분류가 아쉽게 된 경우
+
+컴퓨터가 스스로 직선을 찾게 하려면?
+(반복)
+첫 Classifier는 random으로 정함
+학습 데이터셋에서 임의로 데이터 하나를 정하고, 현재 Classifier가 정확하게 분류하면 그대로 두고, 잘못 분류할 경우 Classifier를 데이터에 가까워지게 조금 이동
+
+Logistic Regression을 위한 CostFunction
+Log Loss Cost를 사용함
+Log Loss = -ln(데이터를 Label로 예측할 확률)

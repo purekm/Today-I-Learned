@@ -1,0 +1,12 @@
+CostFunction
+직선(선형 회귀 모델)이 데이터셋과 가까워졌는지 측정하는 법
+
+Absolute error
+각 데이터에서 직선까지 수직 거리 합계가 Absolute Error 
+
+Squre Error
+각 데이터에서 직선까지의 수직 거리의 제곱의 합계가 Squre error
+
+각 점에서 직선까지의 수직거리의 제곱의 합계 또는 평균 = CostFunction 
+CostFunction의 값이 최소가 될 때의 기울기 값으로 직선(선형회귀모델) 찾기 가능
+=> 주어진 데이터와 가장 가까운 선형회귀모델 구할 수 있음

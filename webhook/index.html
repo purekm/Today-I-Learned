@@ -18,6 +18,14 @@
       <button type="button" onclick="saveToDatabase()">회원가입</button>
     </form>
 
+    
+    <h2>마이페이지</h2>
+    <input type="text" id="searchUserIdInput" placeholder="조회할 사용자 ID 입력">
+    <button type="button" onclick="getUserData()">마이페이지 조회</button>
+
+    <h3>사용자 정보</h3>
+    <div id="userDataDisplay">데이터 없음</div>
+
     <script>
       // 웹훅 실행 함수
       function callAWSLambda() {
@@ -60,6 +68,38 @@
         .then(data => console.log("✅ DB Response:", data))
         .catch(error => console.error("❌ DB Error:", error));
     }
+
+
+    // DB 조회 함수 (마이페이지 조회)
+      function getUserData() {
+        const searchUserId = document.getElementById("searchUserIdInput").value;
+
+        if (!searchUserId) {
+            alert("조회할 사용자 ID를 입력하세요!");
+            return;
+        }
+
+        fetch(`https://q8kbesh6e6.execute-api.ap-northeast-2.amazonaws.com/default/datainput?id=${searchUserId}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("✅ 사용자 데이터:", data);
+            if (data.error) {
+                document.getElementById("userDataDisplay").innerHTML = `<p>❌ 오류: ${data.error}</p>`;
+            } else {
+                document.getElementById("userDataDisplay").innerHTML = `
+                    <p><strong>ID:</strong> ${data.id}</p>
+                    <p><strong>이름:</strong> ${data.username}</p>
+                    <p><strong>이메일:</strong> ${data.email}</p>
+                    <p><strong>전화번호:</strong> ${data.phone_number}</p>
+                    <p><strong>가입일:</strong> ${data.created_at}</p>
+                `;
+            }
+        })
+        .catch(error => console.error("❌ DB 조회 오류:", error));
+      }
     </script>
 </body>
 </html>

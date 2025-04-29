@@ -5,30 +5,17 @@
 using namespace std;
 
 int main(){
-    int n =0;
-    int cnt = 0;
+    int n;
+    stack<char> goodword;
     cin >> n;
-    for(int i=0;i<n;i++){
-        stack<int> stack;
-        string s = "";
+    for(int i=0; i<n;i++){
+        string s;
         cin >> s;
-        int k =0;
-        while(k<s.length()){
-            char c = s.at(k);
-            if(!stack.empty()){
-                if(stack.top()==c) {
-                stack.pop();
-                }
-                else{
-                    stack.push(c);
-                }
-            }else{
-                stack.push(c);
-            }
-            k++;
+        for(int l=0; l<s.length();l++){
+            goodword.push(s[l]);
         }
-        if(stack.empty()) cnt++;
+
+
     }
-    cout << cnt;
     return 0;
     }
