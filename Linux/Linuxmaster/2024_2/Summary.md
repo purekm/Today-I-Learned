@@ -13,6 +13,7 @@ usermod -L -e 2024-12-31 -f 3
 dd는 디스크/파티션/파일의 바이너리 수준 복사
  - 디스크 복제
  - if=FILE 은 input file이고, of=FILE 은 output file
+
 dump는 파일 시스템의 백업
  - 전체 파일 시스템 백업 (ext)
  - 0 ~ -9	: 백업 레벨 지정  
@@ -25,6 +26,7 @@ dump는 파일 시스템의 백업
  - B [숫자] : 한번에 쓰는 최대 블록 수  
  - W : 백업이 필요한 파일시스템을 보여줌  
  - w : 오늘 백업이 필요한 파일시스템만 보여줌
+
 restore [옵션] [백업파일명]
  - r : 전체 복원 (restore entire dump)  
  - t : 복원 전에 트리 구조만 출력  
@@ -32,10 +34,12 @@ restore [옵션] [백업파일명]
  - i : 대화형(인터랙티브) 모드로 복원  
  - f : 입력 파일 지정 (dump 파일)  
  - C : 현재 디렉토리에서 복원 (기본 동작과 유사) 
-rsync는 디렉토리 복사 및 서버 간 파일 전송
--a 옵션은 퍼미션, 타임스탬프, 소유자 등 보존
--v 진행상황
--z 전송 중 압축
+
+rsync는 디렉토리 복사 및 서버 간 파일 전송  
+ - a 옵션은 퍼미션, 타임스탬프, 소유자 등 보존  
+ - v 진행상황  
+ - z 전송 중 압축  
+
 cpio는 아카이브 생성/해제(파일리스트 기반) tar과 유사함
  - 여러 파일 묶기, 이동/복사/백업
  - ovF (o는 백업 생성, v는 진행 상황출력, F는 파일 이름 설정)
@@ -45,23 +49,30 @@ tar
  - c (create)는 새로운 tar 파일 만들기
  - f (file)은 파일 이름 지정
  - 파일 이름 obj.tar을 설정하고, 뒤에 묶을 파일 목록 *.o 를 적는다. 
-nice -n -39 bash
-renice -n -10 -p 1999 or renice -20 1999
 
-tar Jxvf  
+nice -n -39 bash  
+renice -n -10 -p 1999   
+renice -20 1999
+
+tar 
+
+    Jxvf  
     J는 xz 형식 지원  
     x는 압축해제  
     v는 진행상황 보기  
     f는 파일 지정  
 
-커널 메뉴 기반 인터페이스 설정 - make menuconfig
+커널 메뉴 기반 인터페이스 설정 - make menuconfig  
 커널 이미지 빌드 - make bzimage
 
-vgscan - 볼륨그룹 탐색
-lvscan
-pvscan
+vgscan
+
+    볼륨그룹 탐색  
+    lvscan  
+    pvscan
 
 ssh
+
     scp - 보안 파일 복사  
     sftp - 파일전송  
     ssh-add - 개인 키를 ssh-agent에 추가  
@@ -71,38 +82,43 @@ ssh
     ssh-keyscan - 원격 서버의 ssh 공개 키를 수집  
 
 apache
+
     /usr/local/apache/bin/ : 실행 파일 (apachectl, httpd 등)  
     /usr/local/apache/conf/	: 메인 설정 파일 (httpd.conf)  
     /usr/local/apache/conf/extra/ : 서브 설정 파일 (httpd-userdir.conf 등)  
     /usr/local/apache/modules/ : .so 모듈 파일
 
 grep   
+
     -r : 디렉터리를 탐색하며 모든 파일 검색  
     -i : 대소문자 구분X  
     -ri를 주로 사용  
 
-vsftpd - FTP 서버 설정  
+vsftpd
+
+    FTP 서버 설정  
     /etc/vsftpd/vsftpd.conf : vsftpd의 환경 설정 파일  
     /etc/pam.d/vsftpd : vsftpd의 PAM 관련 설정 파일  
     /etc/vsftpd/ftpusers : PAM 관련 설정파일에 사용되는 파일이고, default로 접근 거부될 사용자 목록  
     /etc/vsftpd/user_list : vsftpd를 이용하는 사용자 목록 파일이며, 허가 및 거부 목록으로 사용가능함. 하지만 기본 설정은 deny여서 거부 목록 파일  
-    /etc/logrotate.d/vsftpd : vsftpd의 로그 로테이트 관련 파일
-    weekly
-    minsize 1M 
-    create 0600 root utmp 
+    /etc/logrotate.d/vsftpd : vsftpd의 로그 로테이트 관련 파일  
+    weekly  
+    minsize 1M   
+    create 0600 root utmp   
 
 mail
-    rsyslog.conf - 메일로그 관련
+
+    rsyslog.conf - 메일로그 관련  
     mail.debug - 로그 레벨 설정
-    find로 경로 찾을 때 2>/dev/null을 작성하면 에러없이 답만 출력해줌
-    *.=crit;kern.none - critical만 기록, 커널에는 X
-    로그를 원격 서버로 전송 : @@192.168.5.13 (TCP)
-    로그 입력 → logger  
-    일반 메시지 → /var/log/messages  
-    로그인 성공 → last, who, /var/log/wtmp  
+    find로 경로 찾을 때 2>/dev/null을 작성하면 에러없이 답만 출력해줌  
+    *.=crit;kern.none - critical만 기록, 커널에는 X  
+    로그를 원격 서버로 전송 : @@192.168.5.13 (TCP)  
+    로그 입력 → logger    
+    일반 메시지 → /var/log/messages    
+    로그인 성공 → last, who, /var/log/wtmp    
     로그인 실패 → lastb, /var/log/btmp  
     인증 관련 → /var/log/secure  
-    설정 보기 → /etc/rsyslog.conf
+    설정 보기 → /etc/rsyslog.conf  
 
     메일 서버 관련 패키지는 sendmail  
     rpm - qc sendmail 으로 주요 환경설정 파일 찾기  
@@ -120,6 +136,7 @@ mail
     makemap은 텍스트 테이블 파일을 .db 형태로 변환함  
 
 DNS
+
     /etc/named.conf : 도메인 설정 파일  
     /var/named/도메인.zon : forward zone(도메인 -> IP)
     /var/named/도메인.rev : reverse zone(IP -> 도메인)
@@ -149,7 +166,8 @@ DNS
     };
     master는 내가 주인일 때, slave는 복사본을 관리할 때 사용
 
-dhcp    
+dhcp   
+
     /etc/dhcp/dhcpd.conf : 메인 설정 파일
     /var/lib/dhcpd/dhcpd.leases : 임대 기록 저장 파일
     /etc/sysconfig/dhcpd : 서비스 포트/인터페이스 설정
@@ -175,6 +193,7 @@ dhcp
     }
 
 IPtables
+
     -t : 테이블 종류 (기본은 filter, Nat는 nat)  
     -A : 체인에 규칙 추가(Input, output, forward, prerouting, post routing)  
     -j : 동작 지정(Accept,Drop,Dnat(패킷 도착지 주소 변경),Snat(패킷 발신지 변경),Masquerade)  
