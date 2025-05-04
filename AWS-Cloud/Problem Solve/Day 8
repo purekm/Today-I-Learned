@@ -1,0 +1,29 @@
+Network Load Balancer와 Application Loadbalancer의 차이
+계층의 차이라고 보면 됨
+Application은 http같은 거
+network는 TCP, UDP
+
+모놀리식 프로그램을 작은 기능으로 쪼개서 ECS를 사용하여 로드밸런서랑 같이 사용 가능
+
+READ IOPS가 증가해서 성능이 안 좋아지면 복제본을 마이그레이션해라
+
+가용성 안정적으로 접근 가능한 상태로 유지되는 능력
+
+전용 인스턴스는 하드웨어를 독점적으로 사용하는 액세스
+
+모니터링할때 지표 여러 개를 사용하려면 CloudWatch 복합 경보를 사용해야 함
+
+AWS Control Tower는 가드레일 이라고 하는 데이터 상주 예방 및 탐지 제어기능 
+
+IAM 정책과 역할의 차이
+정책은 권한부여
+역할은 임시로 부여 
+객체 잠금은 write Once read many 모델로 읽기전용으로 만들기 편함
+
+Aurora 자동 백업은 35일 까지만 가능함.
+AWS Backup을 사용하면 스냅샷 예약 및 스냅샨 보존 관리 기능이 있어서 완전 관리형 정책 기반 백업 솔루션을 얻을 수 있음
+수명 주기 정책으로는 삭제까지 안됌
+
+AWS WAF는 Injection, CrossXSS, IP 방어 역할을 함
+사용량 계획은 리소스 남용 방지, 요금 관리, 정상적인 사용자 보호를 위해 사용
+

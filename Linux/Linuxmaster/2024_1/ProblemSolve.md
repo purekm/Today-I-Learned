@@ -2,11 +2,12 @@
 1. -g 주 그룹 설정
 2. -G 추가로 그룹 설정
 3. usermod 
-4. -a -G  linuxmaster
+4. -aG  linuxmaster  
+기존 그룹을 유지하면서 추가로 그룹에 포함해야할 경우 -a(append)도 사용해야 함  
 man usermod와 man useradd를 통해 찾음
 
 ![alt text](image-4.png)
-1. chown(chgrp 도 가능능)
+1. chown(chgrp 도 가능)
 2. project 
 3. chmod
 4. 
@@ -23,15 +24,12 @@ man usermod와 man useradd를 통해 찾음
 3. 10 4 1 */2 * (분 시 일 월 요일)
 
 ![alt text](image-6.png)
-1. -V
-검증할때는 -V
+1. -V 검증할때는 -V
 2. search
-3. 
-작업내용 확인할 때는 history
-4. 
-작업 내용 초기화를 history로 하고 초기화 및 생성은 new로!
+3. 작업내용 확인할 때는 history  
+4. 작업 내용 초기화를 history로 하고 초기화 및 생성은 new로!  
 
-![alt text](image-7.png)
+![alt text](image-19.png)
 1. lsmod
 2. modinfo
 3. modprobe
@@ -50,9 +48,9 @@ man usermod와 man useradd를 통해 찾음
 3. root
 4. authpriv.*
 
-![alt text](image-10.png)
 로그인 기록 확인 명령어 문제
-last, lastlog, lastb를 활용
+![alt text](image-20.png)  
+last, lastlog, lastb를 활용  
 로그인 기록 last
 로그인 실패 기록 lastb
 1. lastlog -t 3
@@ -66,7 +64,7 @@ last, lastlog, lastb를 활용
 3. -w
 4. net.ipv4.icmp_echo_ignore_all=1
 
-![alt text](image-12.png)
+![alt text](image-21.png)
 cpio는 파일을 묶기 및 풀기하는 명령어 백업이라고 봐도 무방함
 1. cpio 
 2. -ovF (o는 백업 생성, v는 진행 상황출력, F는 파일 이름 설정)
@@ -78,8 +76,8 @@ cpio는 파일을 묶기 및 풀기하는 명령어 백업이라고 봐도 무�
 => 가상호스트 설정하라는 의미
 => /usr/local/apache/conf/httpd.conf 파일을 cat으로 확인해봄
 1. vhost_alias_module
-2. conf/extar/httpd-vhosts.conf
-3. /usr/local/apache/conf/extar/httpd-vhosts.conf
+2. conf/extra/httpd-vhosts.conf
+3. /usr/local/apache/conf/extra/httpd-vhosts.conf
 4. VirtualHost
 
 ![alt text](image-14.png)
@@ -94,20 +92,17 @@ Samba는 리눅스와 윈도우 간 파일 및 프린터 공유
 5. write list = ihduser
 
 ![alt text](image-15.png)
-1. newaliases
-2. Makemap hash /etc/mail/sendmail < 가 아니라
-m4 = 매크로로 명령어
-3. 
-sendmail.mc = 설정을 정의하는 소스파일
-4. 
-> 리다이렉션
+1. newaliases  
+2. Makemap hash /etc/mail/sendmail < 가 아니라 m4 = 매크로로 명령어  
+3. sendmail.mc = 설정을 정의하는 소스파일  
+4. '>'  
 
 m4는 소스파일을 가지고 건물을 짓는 작업
 makemap은 전화번호부를 빠르게 찾도록 인덱스를 만들어주는 작업
-/etc/mail/sendmail.mc 는 sendmail 매크로 설정 파일
-/etc/aliases 는 메일 별칭 설정 파일로, newaliases or makemap으로 갱신
-/etc/mail/access 는 메일 접근제어 설정 파일로, 수정 후 makemap hase access < access처럼 사용
-/etc/mail/virtusertable 은 가상 사용자 매핑 파일
+/etc/mail/sendmail.mc 는 sendmail 매크로 설정 파일  
+/etc/aliases 는 메일 별칭 설정 파일로, newaliases or makemap으로 갱신  
+/etc/mail/access 는 메일 접근제어 설정 파일로, 수정 후 makemap hase access < access처럼 사용  
+/etc/mail/virtusertable 은 가상 사용자 매핑 파일  
 
 ![alt text](image-16.png)
 Zone 선언은
@@ -134,26 +129,25 @@ master는 내가 주인일 때, slave는 복사본을 관리할 때 사용
 
 ![alt text](image-17.png)
 프록시 서버는 클라이언트와 인터넷 사이에 중계 서버 역할
-TCP 3128번을 사용
-설정 위치 /etc/squid/squid.conf
-
-http_port - http_port 3128
+TCP 3128번을 사용  
+설정 위치 /etc/squid/squid.conf  
+     
 acl - acl ihd src 192.168.56.0/24
-http_access - http_access allow ihd
-visibile_hostname - visible_hostname proxyserv
+http_access - http_access allow ihd  
+visibile_hostname - visible_hostname proxyserv  
 
-systemctl start squid
-systemctl stop squid
-systemctl restart squid
-systemctl status squid
-squid -k reconfigure - 설정 파일 수정 후 재적용
-squid -z - 캐시 디렉터리 초기화
+systemctl start squid  
+systemctl stop squid  
+systemctl restart squid  
+systemctl status squid  
+squid -k reconfigure - 설정 파일 수정 후 재적용  
+squid -z - 캐시 디렉터리 초기화  
 
-ACL
-src - acl ihd src 192.168.0.0/16 은 IP 주소 기반 제어
-dst - acl ihd dst google.com 은 목적지 주소 기반 필터링
-time - acl worktimes time 09:00-17:00 은 시간 기반 제어
-method - acl methods method GET POST 는 HTTP 메소드 기반 제어
+ACL  
+src - acl ihd src 192.168.0.0/16 은 IP 주소 기반 제어  
+dst - acl ihd dst google.com 은 목적지 주소 기반 필터링  
+time - acl worktimes time 09:00-17:00 은 시간 기반 제어  
+method - acl methods method GET POST 는 HTTP 메소드 기반 제어  
 
 1. acl
 2. 192.168.56.0/24

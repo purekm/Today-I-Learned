@@ -1,0 +1,32 @@
+Amazon FSx for Lustre 는 컴퓨팅 워크로드를 위한 비용 효율적이고 확장 가능한 고성능
+스토리지를 제공하는 완전관리형 서비스
+HPC 는 Lustre
+
+정적 웹사이트를 S3에 저장하고, Amazon CloudFront를 사용함.
+웹사이트 트래픽은 AWS WAF에서 검사해야 함.
+=> CloudFront로만 접속할 수 있또록 한 뒤에 WAF로 검사해야 함
+=> 인증된 요청을 Amazon S3 로 보내도록 CloudFront 를 구성하고 CloudFront 의 인증된 요청에 대한 액세스만 허용하도록 Amazon S3 를 구성합니다.
+=> CloudFront 는 Amazon S3 오리진에 인증된 요청을 전송하는 두 가지 방법으로 오리진 액세스 제어(OAC)와 오리진 액세스 ID(OAI)를 제공합니다.
+
+GuardDuty는 계정보호
+Amazon Inspector은 AWS 감사
+Amazon Macie 는 민감한 데이터 검색 보호 
+
+AWS WAF는 특정 국가만 허용하거나 차단할 수 있음
+EC2 보안 그룹은 IP 기반 필터만 가능=> 국가 기준 접근 제한 불가능
+ALB 에서도 IP 기반 필터만 가능 (수동)
+NACL IP 기반 제어만 가능
+
+CloudFront 필드 수준 암호화는 민감한 데이터를 CloudFront,인터넷,오리진까지 암호화 된채로 이동
+
+리전간 auto scaling 불가
+
+Redis 용 ElasiCache는 앱에 캐시 로직을 추가해야 함
+DynamoDB Accelerator는 인메모리 캐시 기능 제공하여 빠른 응답 가능하고, 코드 수정 필요없음
+또한 완전 관리형이라 관리도 필요없음
+
+IAM 정책과 역할
+정책은 인스턴스에 직접 할당할 수 없음.
+-> EC2에 역할을 연결하고, 정책은 역할에 붙여야 함.
+
+WAF와 ALB, NLB가 나오면 Layer를 잘 생각해봐라
