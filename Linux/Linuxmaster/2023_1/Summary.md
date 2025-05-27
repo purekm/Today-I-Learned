@@ -52,3 +52,6 @@ smbclient
     사용자 쿼터 제한은 usrquota
     그룹 쿼터 제한은 grpquota
     쿼터 정보를 초기화/생성하는 명령어는 quotacheck
+    /etc/fstab에 ext4 파일 시스템으로 포맷된 /dev/sdb1을 /home2로 자동 마운트 설정하며, 사용자의 디스크 제한을 위해 quota사용
+    => /dev/sdb1 /home2 ext4 defaults,usrquota
+    defaults는 기본 마운트 옵션

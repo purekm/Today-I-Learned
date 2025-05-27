@@ -8,7 +8,8 @@ usermod -L -e 2024-12-31 -f 3
  - e : EXPIRE_DATE(yy-mm-dd)에 계정 만기(--expiredate)  
  - f : 패스워드 만기일이 지난 후 패스워드에 Lock 설정할 유예 기간 지정(--inactive)  
  - g : 사용자의 그룹 변경  
- - s : 사용자의 셸 변경 -u : 사용자의 UID 값 변경 
+ - s : 사용자의 셸 변경 
+ - u : 사용자의 UID 값 변경 
 
 dd는 디스크/파티션/파일의 바이너리 수준 복사
  - 디스크 복제
@@ -45,6 +46,8 @@ cpio는 아카이브 생성/해제(파일리스트 기반) tar과 유사함
  - ovF (o는 백업 생성, v는 진행 상황출력, F는 파일 이름 설정)
  - tF(t는 백업된 내용 출력)
  - ivF(i는 백업된 내용 추출)
+ - c portable ASCII format 사용 
+ - d 디렉터리가 없으면 자동으로 생성 
 tar
  - c (create)는 새로운 tar 파일 만들기
  - f (file)은 파일 이름 지정
@@ -64,6 +67,8 @@ tar
 
 커널 메뉴 기반 인터페이스 설정 - make menuconfig  
 커널 이미지 빌드 - make bzimage
+모든 커널 모듈 간의 의존 관계를 기록한 정적 파일
+/lib/modoules/(uname -r)/modules.dep
 
 vgscan
 
@@ -130,8 +135,8 @@ mail
     - REJECT : 메일 거절 메시지를 보냄  
     - DISCARD : 무조건 거절  
     - OK : DNS 조회가 되지 않은 경우라도 메일 허가  
-    /etc/alias  
-    /etc/mail/virtusertable : 하나의 메일 서버에 여러 도메인을 사용하는 환경에서 동일한 메일 계정 요구 시 메일을 각각 도메인으로 포워딩   
+    /etc/alias 는 admin 같은 로컬 이름을 리디렉션
+    /etc/mail/virtusertable : user@naver.com 같은 외부 주소 전체를 매핑  
     /etc/mail/sendmail.mc   
     makemap은 텍스트 테이블 파일을 .db 형태로 변환함  
 
@@ -198,7 +203,8 @@ IPtables
     -A : 체인에 규칙 추가(Input, output, forward, prerouting, post routing)  
     -j : 동작 지정(Accept,Drop,Dnat(패킷 도착지 주소 변경),Snat(패킷 발신지 변경),Masquerade)  
     -F : 초기화(Flush)  
-    -N : new chain   
+    -N : new chain
+    -L : 규칙 확인   
     
     filter : Input, Output, Forward - 기본 방화벽  
     nat : Prerouting, Postrouting, Output - NAT, 포트 포워딩  
@@ -210,3 +216,15 @@ IPtables
     -v : 패킷/바이트 수까지 자세히
     --line-numbers : 번호 붙여서 출력
 
+    iptables-save > firewall.sh : 현재 설정되어 있는 규칙을 firewall.sh 파일에 저장
+    iptables-restore < firewall.sh : 파일에 저장되어 있는 규칙을 불러와서 반영
+
+xinetd
+
+    only_from = 192.168.12.22 192.168.5.0
+    no_access = 192.168.5.44 192.168.4.2
+    instances = 30
+    per_source = 3
+    access_times = 09:00-18:00, 20:00,23:30
+
+    

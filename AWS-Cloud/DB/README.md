@@ -81,4 +81,3 @@ Amazon Redshift
 AWS Database Migration Service
 관계형 DB, 비관계형 DB 및 기타 유형의 데이터 저장소를 마이그레이션할 수 있는 서비스
 
-추가 DB 서비스
