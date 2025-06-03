@@ -1,5 +1,6 @@
 # LLC
 - Data Link layer의 윗 부분 
+
 ![alt text](image-2.png)
 
 ## MAC
@@ -38,8 +39,10 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 - QA: ARP table을 내가 request하지 않아도 업데이트 될 수있을까?
 - -> G-ARP로 인해 업데이트 가능
 
+
 - 정적 : OS에서 임의로 설정하는 것 or 명령어로 내가 집어넣는 것
 - 동적 : request, reply 
+
 
 - **Directed broadcast**는 특정 네트워크의 모든 호스트에게 패킷을 전송하는 방식으로, IP 주소는 특정 네트워크의 네트워크 주소에 해당하는 서브넷에서 마지막 주소를 사용하여 마지막에 255를 사용
 - 모든 노드는 ARP 테이블을 가지고 있음
@@ -51,7 +54,8 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 - ![alt text](image.png)
 - 2-2의 경우에는 일단 ARP table을 업데이트 해줘야 함(timer 돌리기)
 - MAC address가 바뀌었다면 업데이트(Mac address업데이트 및 timer 돌리기)
-- 2-3의 경우에는 A는 이미 B에게 ARP request를 받은 이후의 상황이기 때문에 B의 MAC-IP가 없는게 신뢰가 없으므로 응답을 거부함
+- 나의 경우에는 A는 이미 B에게 ARP request를 받은 이후의 상황이기 때문에 B의 MAC-IP가 없는게 신뢰가 없으므로 응답을 거부함
+
 
 - 하드웨어가 변경되었을 때 업데이트를 위해 G-ARP 사용
 - **중복된 address**가 있는지 확인해보기 위해서 G-ARP 사용
@@ -60,17 +64,19 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 - 2번으로 인해 MAC이 변경된 줄 알고, ARP 테이블을 갱신
 - 3번에서는 response를 A에게 보냄
 - 4번에서는 Hijacking을 당해서, B와 D는 C에게 보내도 A로 전송됨
+=> 상대방의 IP를 내 IP인 것 처럼 G-ARP를 하면, 남들은 MAC_A의 IP가 변경된 줄 알고 캐시된 IP를 수정함. 그럼 B와 D가 C에게 뭔가를 보내면 A에게도 전송됨(ARP 스푸핑)
 
-- **G-ARP** 는 **DAD(Duplicate Address Detection**을 하지 못함
+- **G-ARP** 는 **DAD(Duplicate Address Detection)**을 하지 못함
+=> A가 C의 IP를 사용해도 아무도 알지 못함
 
 ## ACD
 - address conflict detection
-- DAD를 방지하기 위해 source ip를 0.0.0.0 으로 설정 -> ARP probe
+- DAD를 방지하기 위해 source ip를 0.0.0.0 으로 설정, target ip를 원하는 IP로 설정 -> ARP probe
 - Source IP를 0.0.0.0으로 설정하고 보냈을 때, 응답이 있으면 충돌 없으면 ARP
 - reply를 할 수 있는 이유는 MAC으로 통신하기 때문
 
 ![alt text](image-9.png)
-- ARP announcement의 dest IP는 자신의 IP로 설정해서 보냄
+- ARP announcement의 source IP와 dest IP를를 자신의 IP로 설정해서 보냄
 - ARP Poisoning, Spoofing 을 방지하려면, 라우터가 주기적으로 ARP request를 반복하여 A,C가 랜덤하게 업데이트 됨.
 - 라우터는 A와 C에게 번갈아가면서 보내게 되는데, 결국 C가 피해를 받음.
 

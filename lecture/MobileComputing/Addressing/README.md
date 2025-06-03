@@ -55,6 +55,7 @@
 ## CIDR
 - IP에 대한 새로운 해석으로, network prefix의 길이를 자유롭게 사용하되, 길이 명시
 - Network number = IP address + prefix length
+
 ![alt text](image-3.png)
 
 - 12.4.0.0/15라고 명시해줘야함.
@@ -69,6 +70,7 @@
 # CIDR과의 차이점
 - CIDR은 network와 host를 정해진 bit에서 가변적으로 사용
 - Subnetting은 bit를 hierarchy하게 나눔
+
 ![alt text](image-5.png)
 
 # Subnetmask

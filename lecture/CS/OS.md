@@ -63,12 +63,24 @@ CPU 스케줄링
     semaphore - 정수값의 개수만큼 접근 허용
     spinlock - 잠금이 풀릴 때 까지 계속 loop를 돌며 대기(context switching이 없지만, CPU 사용량은 많음)
 
+    mutex와 spinlock의 차이점
+    - mutex는 임계 구역이 lock 걸려있으면, waiting queue에서 기다린다. spinlock은 busy waiting하면서 기다린다. CPU 점유차이
+
+    mutex와 이진 semaphore 차이점
+    - mutex는 lock을 건 스레드만 unlock을 할 수 있지만, 세마포어는 소유권이 없어서 다른 스레드가 자원을 준비하거나, 내가 자원을 공유해도 다른 스레드가 자원을 소비할 수 있음
+
     Deadlock - 여러 프로세스가 필요한 자원을 점유한채로 무한 대기
     Deadlock 발생 조건 4가지
     1. Mutual Exclusion (상호배제)
-    2. Hold and Wait (점유 대기) - 모든 자원을 한번에 요청하도록 설계하면 해소 가능
+    2. Hold and Wait (점유 대기) - 모든 자원을 한번에 요청하도록 설계하면 해소 가능 or 잡고있는 자원이 없을 때만 자원 요청
     3. No Preemption (비선점) 
-    4. Circular Wait (순환 대기) - 자원에 고정된 순서를 부여해서 번호 순서대로 요청하도록 설계하면 해소 가능
+    4. Circular Wait (순환 대기) - 자원에 고정된 순서를 부여해서 번호 순서대로 요청하도록 설계하면 해소 가능 
+
+    Deadlock 해결 방법 4가지
+    예방 - 4가지 조건 중 하나 파훼
+    회피 - 위험 상태 회피 (Banker's 알고리즘 - 자원 요청이 들어오면 자원을 허용했을 때 안전한 상태인지 판단)
+    탐지 - 발생 여부 감지 및 복구 (트랜잭션 롤백)
+    무시
 
 파일 시스템
     Inode - 파일의 메타데이터를 담고 있는 자료구조
