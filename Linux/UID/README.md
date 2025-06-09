@@ -60,18 +60,18 @@ printf() 같은 함수는 "%s", "%d" 같은 포맷 문자열을 사용하여 출
 %x를 여러 번 사용하면 스택의 메모리 내용을 출력할 수 있음.
 공격자는 이를 통해 메모리에서 중요한 정보를 유출할 수 있음 (예: 암호화 키, 비밀번호).
 
+# CHSH
+일반 사용자는 자신의 기본 셸만 변경할 수 있어야 하지만, 보안 취약점이 있으면 공격자가 이를 조작하여 root 계정을 만들 수도 있음.
+![alt text](image-8.png)
+hacker 계정이 root(UID=0, GID=0)로 등록됨.
+이제 공격자는 su hacker 명령을 실행하여 root 권한을 얻을 수 있음.
+
 ## System Inputs (사용자가 제어할 수 있는 시스템 입력)
 # 심볼릭 링크
 프로그램이 시스템 파일, 설정 파일 등을 읽거나 수정할 때, 공격자가 이를 조작할 수 있음.
 심볼릭 링크(Symbolic Link) 공격을 통해 권한 상승이 가능.
 ![alt text](image-6.png)
 
-## User Inputs
-# CHSH
-일반 사용자는 자신의 기본 셸만 변경할 수 있어야 하지만, 보안 취약점이 있으면 공격자가 이를 조작하여 root 계정을 만들 수도 있음.
-![alt text](image-8.png)
-hacker 계정이 root(UID=0, GID=0)로 등록됨.
-이제 공격자는 su hacker 명령을 실행하여 root 권한을 얻을 수 있음.
 
 
 # Environment Variables (환경 변수)
@@ -83,8 +83,16 @@ Capability Leaking(권한 유출)이란, 특권을 가진 프로그램(SetUID �
 # 권한 다운그레이드 (Privilege Downgrading)
 일부 특권 프로그램(예: su, sudo)은 실행 도중 권한을 변경하여 특정 작업만 수행하도록 제한하는 기능을 가짐.
 하지만 잘못된 방식으로 권한을 낮추면, 이전의 특권이 일부 남아있는 상태로 유지될 수 있음
-
 ![alt text](image-9.png)
+
+![alt text](image-11.png)
+
+위의 함수는 cap_leak의 내용
+/etc/zzz가 writable by root 인데, fd를 root 권한으로 생성하고, close 하지 않은 상태로 권한을 다운 그레이드 함
+
+![alt text](image-12.png)
+그냥 /etc/zzz에 리디렉션을 하면 permission deny가 발생하지만, 위의 cap_leak을 실행하면 fd가 열려있는 상태기 때문에 리디렉션 했을 때, permission deny가 발생하지 않음
+
 
 # 실행 중인 프로세스가 특정 시스템 호출(System Calls)에 영향을 받을 수 있음
 일부 시스템 호출(seteuid(), setgid())은 권한을 낮추지만, Saved UID(SUID)는 유지됨.
@@ -99,11 +107,10 @@ Capability Leaking(권한 유출)이란, 특권을 가진 프로그램(SetUID �
 SetUID 프로그램이 내부에서 외부 명령어를 실행할 수 있음.
 예를 들어, system(), exec() 같은 함수를 사용하여 명령어를 실행할 수 있음.
 하지만 이 과정에서 사용자 입력을 제대로 검증하지 않으면 보안 취약점이 발생할 수 있음.
-명령어 주입, PATH 변조 공격 등등 가능
+명령어 주입, PATH 변조 공격등 가능
 ![alt text](image-10.png)
 system() 대신 execve() 같은 함수 사용하면 공격을 방어할 수 있음.
-
-
+system()은 쉘 코드를 해석하지만 ,execve()같은 경우에는 문자열 전체를 실행파일 경로 또는 인자로 생각함
 
 # Principle of Isolation (격리 원칙)
 **원칙: Don't mix code and data.** (코드와 데이터를 섞지 마라.)
