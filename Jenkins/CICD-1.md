@@ -86,17 +86,20 @@ if __name__ == "__main__":
 
 VSCode에서 Flask 서버의 메시지를 수정하고 GitHub에 푸시하자, Jenkins가 자동으로 감지하여 빌드를 실행했다.
 
-📸 빌드 성공 로그:
+시작화면
+![alt text](start.png)
 
-![jenkins build success](attachment\:file-R2tEYBKz8R7GeXVGXaB8ie)
+vscode에서 커밋을 하니까 Jenkins에서 build가 자동으로 실행됨
+📸 빌드 성공 로그:
+![alt text](build.png)
 
 📸 새로운 도커 이미지가 빌드된 모습:
 
-![docker images](attachment\:file-Bi2jbgKaBnCjeiqynsm3mp)
+![alt text](Dockerimage.png)
 
 📸 브라우저에서 수정된 메시지가 반영된 결과:
 
-![final result](attachment\:file-KoY6zME7Yrse3nC7ixJhaB)
+![alt text](result.png)
 
 ---
 
@@ -111,10 +114,10 @@ VSCode에서 Flask 서버의 메시지를 수정하고 GitHub에 푸시하자, J
 
 ### 🚀 다음 목표
 
-* AWS ECR로 이미지 Push 자동화
+
 * EKS 또는 Minikube로 Kubernetes 배포 확장
 * CI 과정에 pytest 테스트 추가
-* Slack 알림 연동
+* Discord 알림 연동
 
 ---
 
