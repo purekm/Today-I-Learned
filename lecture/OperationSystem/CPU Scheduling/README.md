@@ -124,9 +124,6 @@
 
 ---
 
-현대 운영 체제에서 많이 사용되는 방식은
-**Round-Robin**은 타임 퀀텀을 할당하는 방식
-**Priority-Based Scheduling** 우선순위가 높은 프로세스에 CPU 할당하는 방식
-**Multilevel Queue** 프로세스를 여러 큐에 나누고, 서로 다른 스케줄링 알고리즘을 사용하는 방식
-**Multilevel Feedback Queue** 프로세스가 큐 사이를 이동할 수 있도록 하여, CPU 사용량에 따라 동적으로 프로세스의 우선순위를 변경하는 방식
-위의 4가지 방식을 조합하는 방식도 자주 사용된다고 한다.
+윈도우에서는 우선순위 기반 Realtime Scheduling
+리눅스에서는 FIFO, EDF, RR 등 다양한 스케줄링 기법 제공
+ 
