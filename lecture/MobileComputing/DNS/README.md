@@ -24,6 +24,10 @@ DNS 질의 방식
     Recursive Query	- 클라이언트가 “끝까지 찾아달라” 요청 (보통 사용자 → DNS 서버)
     Iterative Query	DNS - 서버가 다른 DNS 서버에게 “너가 알면 말해줘, 몰라도 어디로 가야할지 알려줘” 방식
 
+    만약 google.com을 조회하고 싶다고 함
+    => 클라이언트는 리졸빙 캐시에 google.com이 있는지 물어봐. 없으면 리졸빙 캐시가 재귀적으로 루트, TLD, 권한서버에 질의해서 결과를 클라이언트에게 반환함
+    
+
 DNS 보안
     DNS Spoofing - 공격자가 가짜 DNS 응답을 만들어 사용
     DNS Cache Poisoning - 캐시에 잘못된 도메인-IP 매핑 저장하도록 유도

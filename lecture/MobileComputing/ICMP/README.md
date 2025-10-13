@@ -89,8 +89,11 @@
 - DF를 설정해야 함
 - IPv6의 경우 fragment가 없으니까, 최소 MTU가 존재
 
+# Ping
+- 도달 가능 여부를 알기 위해 ICMP Echo Request를 보내고, 상대방이 Reply 하는지 확인
+
 # Traceroute
-- TTL을 키워나가면서 상대 router IP에 접근한 다음, TTL 0이 되는 순간 ICMP를 통해 router의 IP를 알아냄
+- TTL을 키워나가면서 상대 router IP에 접근한 다음, TTL 0이 되는 순간 ICMP를 통해 router의 IP를 알아냄으로써 어떤 router 거치는 지 확인 
 
 # ICMPv6
 - ICMPv4 의 에러 메시지와, query request/reply 유지

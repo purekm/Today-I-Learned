@@ -1,5 +1,3 @@
----
-
 # Chapter 1 - Overview
 
 ## 컴퓨터 시스템의 구조

@@ -34,11 +34,13 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 - ![alt text](image-8.png)
 - ethernet frame에는 broadcast이기 때문에 ffff~로 destination이 적혀있고, ARP request에는 상대방의 mac address를 모르기 때문에 destination Mac이 0000으로 채워짐
 
-- ARP table에는 <Ip,MAC>의 쌍으로 존재
-**Sequence**는 IP테이블 참조 후, 서브넷이 있으면 그냥 ok, 없으면 default gate ip를 참조해서 arp 
-- QA: ARP table을 내가 request하지 않아도 업데이트 될 수있을까?
-- -> G-ARP로 인해 업데이트 가능
+- ARP table에는 <Ip,MAC>의 쌍으로 존재. 
+순서는 내 로컬 라우팅테이블을 확인
+-> 같은 서브넷에 있으면 해당 IP를 broadcast로 보냄으로써 ARP
+-> 같은 서브넷에 없는 경우에는 default gateway의 MAC을 얻어서 보냄
 
+- QA: ARP table을 내가 request하지 않아도 업데이트 될 수있을까?
+-> G-ARP로 인해 업데이트 가능
 
 - 정적 : OS에서 임의로 설정하는 것 or 명령어로 내가 집어넣는 것
 - 동적 : request, reply 
@@ -52,13 +54,12 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 ## G-ARP 
 - 자기 자신의 IP를 broadcast
 - ![alt text](image.png)
-- 2-2의 경우에는 일단 ARP table을 업데이트 해줘야 함(timer 돌리기)
-- MAC address가 바뀌었다면 업데이트(Mac address업데이트 및 timer 돌리기)
+- 가-1 의 경우에는 일단 ARP table을 업데이트 해줘야 함(timer 돌리기)
+- 가-2 MAC address가 바뀌었다면 업데이트(Mac address업데이트 및 timer 돌리기)
 - 나의 경우에는 A는 이미 B에게 ARP request를 받은 이후의 상황이기 때문에 B의 MAC-IP가 없는게 신뢰가 없으므로 응답을 거부함
 
 
-- 하드웨어가 변경되었을 때 업데이트를 위해 G-ARP 사용
-- **중복된 address**가 있는지 확인해보기 위해서 G-ARP 사용
+- 하드웨어가 변경되었을 때 업데이트를 위해 G-ARP 사용. **중복된 address**가 있는지 확인해보기 위해서 G-ARP 사용
 
 - ![alt text](image-1.png)
 - 2번으로 인해 MAC이 변경된 줄 알고, ARP 테이블을 갱신
@@ -76,7 +77,7 @@ ARP packet에서는 Target Mac address를 000000000000으로 한다.
 - reply를 할 수 있는 이유는 MAC으로 통신하기 때문
 
 ![alt text](image-9.png)
-- ARP announcement의 source IP와 dest IP를를 자신의 IP로 설정해서 보냄
+- ARP announcement의 source IP와 dest IP를를 자신의 IP로 설정해서 보냄(G-ARP와 유사하지만 목적이 다른 느낌)
 - ARP Poisoning, Spoofing 을 방지하려면, 라우터가 주기적으로 ARP request를 반복하여 A,C가 랜덤하게 업데이트 됨.
 - 라우터는 A와 C에게 번갈아가면서 보내게 되는데, 결국 C가 피해를 받음.
 
