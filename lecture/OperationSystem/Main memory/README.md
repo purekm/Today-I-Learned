@@ -87,8 +87,6 @@
 * 가변 크기의 partition 활용
 * 프로세스 종료 시 hole 발생, 인접 partition 병합
 
-
-
 ---
 
 ## Dynamic Storage Allocation
@@ -142,6 +140,12 @@
 * Context Switch 시 Address-space identifiers 필요
 
 ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/2d3b0511-6c95-4f9c-9beb-434c3d5d0822)
+
+1. 페이지를 찾아볼 때 CPU가 해당 페이지의 논리주소를 찾아보고, TLB를 찾아봄. 
+2. 만약 TLB에서 hit 되면 물리 메모리 참조에 있는 페이지 찾아봄. miss나면 page table 찾아보고 있으면 해당 페이지를 TLB에 적재하고 물리 메모리 참조, 여기서도 miss가 나면 페이지 폴트 커널 진입
+3. 스왑영역에서 페이지 찾아와서 페이지 테이블에 추가 및 TLB에 추가 후 물리 메모리 참조
+
+
 
 ---
 
@@ -206,3 +210,19 @@
 * Android: 메모리 부족 시 앱 종료 후 상태 저장
 
 ---
+# 프로세스 주소 공간
+- Code : 함수 및 명령어 같은 코드 영역
+- Data : 초기값이 있는 정적 변수 및 static 변수
+- BSS : 초기값이 없는 정적 변수 및 static 변수
+- Heap : 동적 변수 (malloc)
+- Stack : 지역 변수 및 리턴 어드레스
+
+Data와 BSS의 차이가 뭔가?
+
+=> 초기값이 있으면 실행파일을 그대로 읽어와야 해서 I/O가 발생해 느리지만, 초기값이 없으면 메모리에 0으로만 채우면 되서 빠름. (메모리 최적화 및 효율적)
+
+Heap의 malloc방식
+
+=> malloc할 때 free list에 빈 공간이 있으면 이를 할당해주지만, 빈 공간이 없으면 추가적으로 공간을 할당함.
+- 작은 공간을 할당해야 할 때는 시스템콜 brk()로 힙 영역을 늘림으로써 공간을 할당
+- 더 큰 공간을 할당해야하면 시스템콜 mmap()으로 heap 공간 외부에 추가적인 공간을 할당

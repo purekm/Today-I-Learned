@@ -1,11 +1,47 @@
-Imperative vs Declarative
 
-Taxi를 비유로 들자면
-Imperative는 길을 다 알려주면서 도착지에 가는 방식이고,
-Declarative는 도착지만 정해주는 방식이다.
-=> '어떻게'를 중요시 하면 Imperative, '무엇'을 중요시 하면 DEclarative
+---
 
-Imperative 명령어는 yaml 파일을 다룰 필요가 없어서 빠르게 오브젝트를 만들고 수정하는데 도움디 됨.
+# Imperative vs Declarative
 
-Declarative 명령어는 apply를 사용하는데 지능적임.
-객체가 이미 존재함으로써 발생하는 에러나 업데이트 적용을 못하는 에러는 발생하지 않음
+## 개념
+
+* **Imperative:**
+  사용자가 **‘어떻게 할지’**를 직접 명령하는 방식
+* **Declarative:**
+  사용자가 **‘무엇을 원한다’**만 선언하고,
+  시스템이 알아서 상태를 맞추는 방식
+
+---
+
+## 비유 (Taxi 예시)
+
+* **Imperative:**
+  운전기사에게 “이 길로 가서, 좌회전하고, 다리 건너면 우회전하세요.”
+  → 경로(절차)를 모두 알려줌
+* **Declarative:**
+  운전기사에게 “서울역으로 가주세요.”
+  → 목적지만 말함
+
+> ‘**어떻게**’를 중요시하면 Imperative,
+> ‘**무엇**’을 중요시하면 Declarative.
+
+---
+
+## 특징 비교
+
+| 구분         | Imperative                                        | Declarative        |
+| ---------- | ------------------------------------------------- | ------------------ |
+| 초점         | 절차 중심 (How)                                       | 결과 중심 (What)       |
+| 예시 명령어     | `kubectl run`, `kubectl create`, `kubectl delete` | `kubectl apply -f` |
+| YAML 필요 여부 | 불필요                                               | 필요                 |
+| 장점         | 빠르게 오브젝트 생성·수정 가능                                 | 자동 업데이트, 충돌 최소화    |
+| 단점         | 재현 어려움, 협업 비효율                                    | 초기 작성 번거로움         |
+
+---
+
+## 요약
+
+* **Imperative:** 즉각적, 실험용에 적합
+* **Declarative:** 지능적, 운영 환경에 적합
+
+---

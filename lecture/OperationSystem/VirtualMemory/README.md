@@ -1,372 +1,231 @@
 
-가상 메모리
--
-1. 전체 프로그램이 다 필요하진 않으므로, 일부분만 사용 <br/>
-2. 일부만 로딩하니까 memory의 한계에 제약 받지 않음 <br/>
-3. I/O가 작아서 빠르게 돌아감 <br/>
-4. 논리적인 메모리를 물리적인 메모리보다 많이 할당 가능 <br/>
-5. 공유가 쉬움 <br/>
-6. 프로세스 생성이 효율적 <br/>
-7. 동시에 돌리기 가능하고, I/O가 적게 필요 <br/>
-
-가상의 주소라서 0번부터 끝까지 사용 가능 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/f5088fdf-0830-4996-aca3-659cb46a4cf0) <br/>
-
-hole에 공유 library or 공유 메모리가 들어감 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1b19da50-5c11-4c1e-98b5-bb20be8cef45) <br/>
-
-Demand paging - 필요한 페이지만 가져오는 것 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c9cb3485-0898-4b04-8c1e-993179a888d1) <br/>
-
-주소 변환 과정에서 Invalid bit가 i로 설정되어 있으면 page fault가 발생 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/5beb0f30-3c41-4e0c-bc16-c4c32de8205d) <br/>
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/71af5be2-d6d9-452e-b08e-aafee0205233) <br/>
-
-Steps in Handling Page Fault <br/>
--
-1. 페이지 참조 <br/>
-   1. 만약 프로세스가 특정 페이지를 참조하고, 그 페이지가 현재 메모리에 없을 경우 해당 참조는 os에 의해 trap으로 처리 <br/>
-2. 운영 체제의 결정 <br/>
-   1. 운영체제는 페이지 참조가 유효한지 판단 <br/>
-   2. 주소 범위 밖을 참조하면, 프로세스를 중단 <br/>
-   3. 페이지가 메모리에 없는 경우, 페이지 fault 처리를 진행 <br/>
-3. free frame 찾기 <br/>
-4. 페이지 swap <br/>
-5. 테이블 update <br/>
-6. 명령어 재시작 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c3bec95d-2542-4ddd-89b0-6a4aa163e59f) <br/>
-
-1번 진행하려고 하는데 M이 page memory에 없네?? <br/>
-1번 page table에서 찾으려는데 invalid 하므로 interrupt를 발생시켜 제어권을 os에게 넘김 <br/>
-2번까지는 user mode이고, 이후에는 kernel 모드 <br/>
-3번에서 backing store로 가서 빈 frame 자리 찾고, (4번) backing store에서 페이지를 가져온 후, 빈 frame에다가 넣음 <br/>
-5번에서는 옮겨온 페이지의 frame 번호를 page table에 저장하고, 업데이트 <br/>
-6번에서 마지막으로 restart instruction <br/>
-
-4번 과정이 진행될 때, 디스크는 매우 느리기 때문에 context switching이 되어서 다른 process가 일하고 있음 <br/>
-I/O가 끝나면 ready queue에 넣어주고나서 자기 차례가 되면 실행 <br/>
-이후에 원래 interrupt가 걸린 곳으로 돌아온다. <br/>
-
-Major page fault - 페이지가 메모리에 없는 경우 발생 <br/>
-Minor page fault - 페이지가 메모리에 있지만 매핑이 안 되어 있는 경우(공유 라이브러리), 또는 원하는 페이지가 free-frame 리스트에 아직 남아 있는 경우 발생 <br/>
-
-pure demand paging - 시작할 때 아무런 페이지가 없으니까 fault가 자주 발생 <br/>
--> prepaging으로 메모리에 일부를 미리 로딩시킴(드물지만 한 명령어에 4번의 fault 발생 가능) <br/>
-
-Demand paging 하려면 Hardware support 필요 <br/>
-1. Page table with valid/invalid bit <br/>
-2. Secondary memory (swap space) <br/>
-3. instruction restart <br/>
-
-Instruction restart <br/>
--
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c28bde13-d772-4d6e-8b97-7a5df8cb26df) <br/>
-이런 경우에는 fault가 일어났을 때 restart해도 문제가 생김(원본이 깨짐) <br/>
-
-Solution
-1. 페이지 fault가 일어나기 전에 미리 페이지를 불러들이고 명령어를 실행 <br/>
-2. 임시 레지스터에 겹치는 부분을 저장했다가 page fault 발생 시 restore <br/>
-
-Page fault 상세 과정 <br/>
--
-1. Trap to OS <br/>
-2. Interrupt가 발생했으므로, register와 state를 저장하고 감 <br/>
-3. Interrupt의 원인이 page fault인지 확인 <br/>
-4. 페이지 조회가 유효한지 확인하고, 디스크에서 해당 페이지의 위치를 파악 <br/>
-5. 메모리에서 빈 공간을 찾아서 메모리로 읽어 옴 <br/>
-   1. request가 발생하면, disk에 request queue에 들어가서 조금 있다가 실행됨(디스크 내부에서 순서가 나름 최적화됌) <br/>
-   2. device 탐색 및 대기 시간 발생 <br/>
-6. 5번을 기다리는 동안, CPU는 다른 프로세스에게 넘어감 <br/>
-7. I/O가 종료되면 interrupt가 걸려서 실행 중인 프로세스를 중단시킴 <br/>
-8. 따로 실행되었던 프로세스의 레지스터와 상태를 저장하고 종료됨 <br/>
-9. Interrupt가 디스크의 request였는지 확인 <br/>
-10. Page table 정리 <br/>
-11. Process가 ready queue에 넣어지고, 스케줄러에 CPU제어권을 넘겨줬으므로 CPU할당을 기다림 <br/>
-12. Interrupt를 받았던 장소로 돌아와서 저장했던 register와 state 복구 <br/>
-
-Free Frame list <br/>
--
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b81d10da-d407-403e-a16b-cfbf585fbbbb) <br/>
-Free frame을 사용할 때, 안에 있는 데이터를 지우고 줌(zero-fill-on-demand) <br/>
-어느정도 임계치(꽉 채우지 않음)까지 찬다면, 채워져 있던 칸을 빼앗아옴 <br/>
-만약 뺐어왔는데 변경했다면(dirty bit) 변경한 내용을 backing store에 저장하고 free frame list로 옮김 <br/>
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/32e1a461-4c2f-45dd-99fe-74508b4573a8) <br/>
-변경된 애들을 저장하는 modified frame list에 모아두고, 나중에 쓰게되면 free-frame list로 옮김 <br/>
-
-Backing store에 데이터를 저장하는 것은 비용이 많이 듦 <br/>
-1. Free frame에서 하나를 가져와서 modified frame에 있는 애들을 압축해서 넣음 <br/>
-2. 압축해서 free frame에 저장했으니까, 저장한 애들은 free-frame list에 올려도 되고 굳이 backing store에 저장할 필요 없음 <br/>
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/36fe4943-b605-48ce-95d2-9ba80335dc37) <br/>
-7번은 free frame list에서 빠졌지만, 압축한 3개가 free frame list로 옮겨짐 <br/>
-Android와 IOS에서는 swapping이나 paging을 쓰지 않고 memory compression을 사용 <br/>
-
-Performance of Demand Paging <br/>
--
-Three major activities <br/>
-1. Service the interrupt <br/>
-2. Read the page <br/>
-3. Restart the process <br/>
-
-Page Fault rate 0<=p<=1 <br/>
-if p = 0 -> no page fault <br/>
-if p = 1 -> all fault <br/>
-
-Effective Access Time(EAT) <br/>
-EAT = (1-p)*memory access + p(page fault overhead + swap page out + swap page in) <br/>
-
-Example <br/>
-Memory access time = 200ns, average page fault service time = 8ms = 8000000ns <br/>
-EAT = (1-p)*200+p*8000000ns = 200+p*7999800 -> EAT 는 p에 비례 <br/>
-
-Demand Paging Optimization <br/>
--
-Swap 공간은 파일 시스템보다 빠르기 때문에 swap space 사용 <br/>
-변하지 않는 binary 이미지는 파일 시스템에 읽어오고, 프로그램 실행하면 새로운 정보들이 생기는데 <br/>
-이런 정보들을 anonymous memory라고 부르고 swap space 사용 <br/>
-
-Copy on write <br/>
--
-카피한 것 처럼 페이지를 공유 <br/>
-Vfork() 실제로 복제하지 않고 링크만 가져옴 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/8752976b-b1e2-4785-a896-eb8a0e3b4cba) <br/>
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/ceb26f4e-6d4a-4c76-b119-7a5cceee0f89) <br/>
-
-
-
-Free Frame 자리가 없으면 어떻게 해야하나? <br/>
--> free frame이 없다는 말은 메모리가 꽉 찼다.<br/>
-페이지 교체 - 메모리에 있지만, 잘 사용하지 않는 페이지를 내보냄<br/>
-데이터를 불러왔을 때랑 비교했을 때 값이 변경된다면 backing store에 저장해야함 <br/>
--> 당연히 dirty bit이 안되어있는 애를 부르는게 편함 <br/>
-누구를 내보낼지 판단할 때 dirty bit도 관여를 함<br/>
-
-페이지 교체 <br/>
-페이지를 불러오는데, 메모리를 불러와야하는데 메모리 공간이 없으면 victim frame을 찾아야함<br/>
-victim frame이 dirty 하다면 backing store에 저장해야줘야 함<br/>
-이후 page fault가 일어나지 않도록 update를 해줌<br/>
-
-page fault에서 page transfer은 잠재적으로 2번<br/>
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/caac58a4-f610-4fab-b84a-57f5a15dc50f) <br/>
-
-O를 찾았는데 invalid라서 f를 victim frame으로 찾음 (자기 page를 희생 - local page replacement)<br/>
-
-f를 희생시켰으므로 f는 invalid가 되고 O는 f가 되어 valid로 바뀜 ( O | i -> f | v) <br/>
-
-페이지 교체 알고리즘 <br/>
--
-reference string -메모리를 조회할 때 조회하는 페이지를 string으로 나타낸 것 <br/>
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/218a5d23-4396-4c1d-89c6-f20debcbc8d3) <br/>
-reference string은 페이지 교체 알고리즘의 효율을 평가하는데 좋음 <br/>
-
-페이지 교체 알고리즘이 결정해야할 것<br/>
--
-1. 프로세스 당 몇개의 프레임을 할당하는가?<br/>
-2. 어떤 프레임을 교체하는가?<br/>
-
-프레임을 늘리면 페이지  폴트가 감소하는 일반적인 모습 <br/>
--
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1dfcfdb8-ad90-47ee-b3ce-9c5292eb2bc4) <br/>
-
-
-FIFO Algorithm <br/>
--
-가장 먼저 들어온 순서대로 페이지 교체<br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7c6b5223-f750-4c1e-8d68-fb70474ee00d) <br/>
-
-프레임을 늘리면 페이지 fault가 일반적으로 감소한다고 말했었는데, 항상 그렇지는 않음 <br/>
--  
-1. Belady's Anomaly <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/5d5e21d1-f107-4f26-b42f-a5b30447dbdf) <br/>
-이런 현상이 일어나면, 좋은 알고리즘은 아니라는 의미<br/>
-
-Optimal Algorithm <br/>
--
-프레임안에 있는 숫자 중 가장 늦게 사용하는 숫자를 교체<br/>
-미래에 어떤 걸 사용하는지 알아야 하므로 구현하기 어렵긴하다... <br/>
-FIFO에서는 15번의 page fault가 일어났지만, Opt 에서는 9번의 page fault <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7a86c852-e356-4902-b9aa-436b6fa5f244) <br/>
-만약 reference string을 거꾸로 뒤집어서 적용해도 page fault가 똑같이 나옴 <br/> 
-
-LeastRecentlyUsed(LRU) Algorithm <br/>
--
-가장 오래전에 사용했던 페이지를 교체 <br/>
-FIFO에서는 15번, Opt에서는 9번, LRU에서는 12번의 page fault 발생 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/67d4362d-9962-4113-b6af-77e939e33e40) <br/>
-근사치를 사용하여 구현함 <br/>
-OPT 알고리즘과 유사하게, 거꾸로해서 page fault를 세어봐도 page fault의 수가 같음 <br/>
-현대 페이지 교체의 major pick <br/>
-
-LRU 구현 방식 <br/>
--
-Counter 방식 <br/>
-시계처럼 돌아가는 방식으로 옛날에 사용한 것을 찾음 <br/>
-Stack 방식
-Stack이므로 마지막에 사용했던게 젤 위에 있음 <br/> <br/>
-이 두 방식을 hardware 도움 없이 software로만 한다면 10배 이상 느려짐
-
-LRU와 OPT는 stack algorithms을 따르기 때문에 Belady's Anomaly를 가지지 않음 
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b56d945d-58cf-4c7e-a19b-1e0f64022a0d) <br/>
-a이후에 7을 access 했는데, 스택안에 아래에 있던 7이 top으로 올라옴 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/6d5cd89a-499d-49e2-8812-3db5def1c490) <br/>
-
-LRU Approximation Algorithms <br/>
--
-hardware의 도움을 받아서 LRU하는 버전<br/>
-1. Reference bit<br/>
-   1. 처음에 bit = 0으로 설정<br/>
-   2. 최근에 page를 참조했으면 1로 변경<br/>
-   3. 주기적으로 reference bit을 0으로 초기화 해줌(나중에 순서를 모르겠지만 어쩔 수 없음)<br/>
-2. Second-chance algorithm<br/>
-   1. Clock replacement<br/>
-   2. 1이면 (기회를 한번 주고)0으로 변경하고, 0이면 교체 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/05fbbb3a-0055-4e3c-9a95-69c25a294390)<br/>
-3. Enhanced Second-chance algorithm<br/>
-dirty bit까지 사용<br/>
-dirty bit이 1이면 변경되었다는 의미니까 내보내기 힘듬<br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/cb5f68aa-d3ef-4ef4-8c24-e7650a0651e4)<br/>
-가장 만만한게 (0.0)<br/>
-
-reference bit이 1이면 사용되었다는 사실만 알고, 언제 되었는지는 모름 <br/>
-
-4. Additional reference bits algorithm  <br/>
-Timer interrupt를 통해 주기적으로 OS가 오른쪽으로 한 비트씩 이동시킴 <br/>
-과거의 행적을 알 수 있는 장점이 있음 <br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/e6194507-cf39-4004-a733-fcc46459aa5c) <br/>
-
-5. Demand paging and reference bit <br/>
-Demand paging은 필요할 때 페이지를 불러오기 때문에 reference bit을 1로 세팅 <br/>
-페이지를 불러오고 나서 Second-chance 알고리즘처럼 할 수도 있고, 주기적으로 모든 reference bit을 0으로 reset해버림  <br/>
-
-Counting Algorithms  <br/>
--
-구현이 비싸고 , OPT에 근접하지 못함 <br/>
-페이지 접근 빈도수로 결정 <br/>
-Least Frequently Used Algorithm(LFU)  <br/>
-Most Frequently Used Algorithm(MFU) <br/>
-
-Page-Buffering Algorithms <br/>
--
-Pool을 사용하여 page fault 시간(누구 거를 교체할거냐 find 시간)에 찾지 않고 바로 할당 <br/>
-Pool을 사용하면 victim 스왑 공간을 쓰는것 과 병행 실행 가능하다. <br/>
-
-변경된 페이지를 paging device가 놀때, store에 써놓으면 시간 절약 가능 <br/>
-free frame의 내용이 backing store과 같으면 재사용 가능 (원래는 지우고 줌) <br/>
-
-Applications and Page Replacement <br/>
--
-DBMS는 앞으로 어떤 일을 할지 자기가 알 수 있어서, 자기가 관리를 함  <br/>
-DBMS 처럼 스스로 메모리와 I/O 버퍼를 관리하는 경우, double buffereing 현상이 발생할 수 있음 <br/>
-
-raw disk mode 읽어봐 <br/>
-
-Allocation of Frames  <br/>
--
-프로세스마다 몇개의 frame을 할당할거야?<br/>
-minimum과 maximum 개수가 존재<br/>
-CPU마다 달라질 수 있음<br/>
-
-Maximum of frames<br/>
-1. fixed allocation<br/>
-   1. Equal allocation - 균등 할당 <br/>
-   2. Proportional allocation - process의 크기에 따라서 할당<br/>
-      1. ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/bc151598-7aa0-4859-bf50-8b327d25ae1a)<br/>
-
-3. priority allocation<br/>
-
-Global vs Local Allocation<br/>
-1. Global - 전체 중에서 교체할껀지<br/>
-2. Local - 자기꺼에서 교체할껀지<br/>
-선택의 문제로 각자의 장 단점이 있음<br/>
-
-Reclaiming Pages<br/>
--
-global page replacement일때 발생<br/>
-free frame의 수가 임계치에 도달하면 페이지 교체를 미리 함<br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/3b14a8a6-540a-4668-8935-582de97dc83c)<br/>
-
-Non-Uniform memory access<br/>
--
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/e42c8863-5638-4438-b3ba-a2a4928ebd9e)<br/>
-
-
-Thrasing<br/>
--
-어느 순간이 되면 page fault가 급격히 늘어남 - 악순환<br/>
-프로세스가 프로그램 실행보다 페이징에 시간을 더 많이 보내는 현상 - thrashing<br/>
-페이지를 내보내고 들이는 데 시간을 더 많이 씀 -> I/O 연산이 많아짐 -> CPU의 활용도가 떨어짐 <br/>
-OS에 판단하기에 I/O 활용도가 낮으면 더 많이 쓸 수 있지 않을까? 라는 착각을 하게 됨 -> 상황 악화<br/>
-
-Demand Paging 과 Thashing의 관계<br/>
-Locality model - 같이 활발하게 사용하는 페이지의 집합<br/>
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/f07c275d-8d57-4bee-ad65-52c3a4e8acb4)<br/>
-
-Local 이나 priority page replacement 쓰면 해결되는거 아니야?<br/>
--> local page replacement로는 해결 불가.<br/>
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b7eab161-349f-4f88-a986-d77b6cd262af)<br/>
-전체 메모리를 다 쓰지는 않음(지역성)<br/>
-
-Working-Set model<br/>
--
-일정 시간동안 어떤 페이지가 조회되었는지, 몇개가 조회되었는지 측정하는 model
-일정 시간 - instruction들이 실행되는 시간
-일정 시간을 잘 정하는게 중요함
-일정시간 동안 사용되었던 프레임의 크기 = working set
-
-D>m -> Trashing
-어떻게 working set을 추적해?
--> Timer와 reference bit을 사용하여 근사치를 계산
-
-Page-Fault Frequency
--
-local replacement policy
-
-page fault의 빈도수를 통해서 결정
-page fault 많이 일어났으면 frame 더 주는?
-
-
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/99cc8eb7-c240-4959-8b7f-0557d51e5d33)
-지역성이 이동한다고 말함 - 구간을 working set으로 지정
-
-Allocating Kernel model
--
-커널 맞춤형으로 코드를 짜면 편하지않나?
-초창기 Buddy System Allocator
-메모리가 부족하면, 메모리를 절반씩 잘라서 줌 - 나중에 반자른거 합치면 복구
-
-현재 Slab Allocator
-Slab - 하나의 물리적으로 연속적인 페이지
-Cache - 하나 이상의 slab
-kernel object 크기에 맞춰서 cache를 자름 
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/6f3f50aa-d3d4-486c-8c25-cd11bf288962)
-
-
-Prepaging
--
-실행 파일에 대한 prepaging은 예측하기 어렵지만, 데이터 파일에 대한 prepaging은 예측가능하다.
-
-
-Page size
--
-![image](https://github.com/purekm/Today-I-Learned/assets/90774046/48382a01-10d8-4e8d-a75d-026c6914a51a)
-Fragmentation은 페이지 크기가 작을수록 좋음
-
-TLB Reach
--
-TLB 엔트리가 많으면 좋지만, 비쌈 
-TLB Reach - TLB로 접근 가능한 메모리양
-TLB Reach = TLB Size * Page Size  - TLB 크면 좋아
-
-I/O interlock
--
-I/O 버퍼들이 있는 페이지는 교체되면 문제가 생기기 때문에 고정 시킴
-
-Linux 에서는 앞에 있는 애들은 자주 사용하고, 뒤에 애들은 덜 사용함
-Window 에서는 clustering 방법을 쓰기 때문에, 페이지 fault 기준 앞뒤 3개 총 7개를 불러들임
+---
+
+# 가상 메모리 & 페이지 교체 총정리
+
+> **가상 메모리(Virtual Memory)** = 실제 RAM보다 큰 **논리적 주소 공간**을 각 프로세스에 독립적으로 제공하는 메모리 관리 기법.
+
+---
+
+## ✅ 가상 메모리의 목적과 장점
+
+* **독립적 주소 공간**: 프로세스마다 0번 주소부터 끝까지 논리적으로 사용 가능(보호/격리).
+* **일부만 로딩(요구 페이징)**: 전체 프로그램이 아닌 **필요한 페이지만** 메모리에 적재.
+* **메모리 한계 완화**: 논리 메모리를 물리 메모리보다 **더 많이 할당 가능**.
+* **성능**: 불필요한 I/O 감소 → 평균 접근 지연 **감소**.
+* **공유 용이**: 공유 라이브러리/공유 메모리로 **코드·데이터 공유**.
+* **프로세스 생성 효율**: 포크 후 **COW(Copy-on-Write)** 등으로 빠른 생성.
+* **동시성 향상**: 여러 프로세스 동시 실행, I/O 중첩으로 **CPU 활용도↑**.
+
+> 참고 이미지
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/f5088fdf-0830-4996-aca3-659cb46a4cf0)
+> hole(빈 구간)에 **공유 라이브러리/공유 메모리**가 들어감
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/1b19da50-5c11-4c1e-98b5-bb20be8cef45)
+
+---
+
+## 🧩 요구 페이징(Demand Paging)
+
+* **필요한 페이지만** 디스크(백킹스토어)에서 **그때그때** 메모리로 로드.
+* 초기 구동 시 페이지가 비어 있어 **page fault가 잦을 수 있음** → **pre-paging**(선적재)로 완화.
+* 하드웨어 전제:
+
+  1. **유효/무효 비트**가 있는 페이지 테이블
+  2. **2차 저장장치(swap)**
+  3. **명령 재시작(Instruction Restart)**
+
+> 참고 이미지
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c9cb3485-0898-4b04-8c1e-993179a888d1)
+> **Invalid**(무효)이면 페이지 폴트
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/5beb0f30-3c41-4e0c-bc16-c4c32de8205d)
+
+---
+
+## 🔁 주소 변환과 TLB
+
+1. **CPU**: 가상주소(VA) 생성
+2. **MMU**: TLB 조회
+
+   * **Hit** → 물리주소(PA) 즉시 생성
+   * **Miss** → 페이지 테이블 워크(PTE 확인)
+3. **PTE 유효** → TLB 적재 후 접근
+4. **PTE 무효** → **페이지 폴트** 처리 진입
+
+> 참고 이미지
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/71af5be2-d6d9-452e-b08e-aafee0205233)
+
+---
+
+## ⚙️ 페이지 폴트 처리 절차
+
+**Steps in Handling Page Fault**
+
+1. **페이지 참조** → PTE 무효면 **트랩** 발생(OS로 진입)
+2. **OS 판단**: 접근이 **합법(VMA 내)** 인지 검사
+3. **Free frame** 탐색(없으면 교체)
+4. **백킹스토어에서 페이지 로드**(또는 zero-fill/COW)
+5. **PTE 업데이트**(PFN, 권한, Present=1) + **TLB 갱신**
+6. **명령 재시작**(Instruction Restart)
+
+> 참고 이미지
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c3bec95d-2542-4ddd-89b0-6a4aa163e59f)
+
+**메이저/마이너 구분**
+
+* **Major**: 페이지가 **RAM에 없음** → **디스크 I/O** 필요 → 느림
+* **Minor**: 페이지는 RAM에 **이미 존재**, 단지 **이 프로세스의 매핑만 없음**(공유 라이브러리, COW 등) → **PTE만 갱신** → 빠름
+
+---
+
+## 🧠 Instruction Restart 주의
+
+* 일부 연산은 중간에 폴트 발생 시 **원자성/정합성** 문제가 생길 수 있음.
+  → **사전 선적재** 또는 **임시 레지스터 보관/복구** 전략 필요.
+
+> 참고 이미지
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/c28bde13-d772-4d6e-8b97-7a5df8cb26df)
+
+---
+
+## 📦 Free Frame List & Modified / Compressed
+
+* **Free Frame List**: 즉시 재사용 가능한 **빈 물리 프레임** 모음(필요 시 **zero-fill-on-demand** 후 제공).
+* **Modified(Dirty) List**: **수정된 페이지**(디스크와 내용 다름)를 일단 모아둠 → **flush daemon**이 **비동기 write-back** 후 Free로 이동.
+  *(I/O 묶음 처리로 효율↑)*
+* **Compressed List**: **RAM 부족 시**, 스왑 전에 **RAM 안에서 페이지 압축 저장**(여러 페이지를 1프레임에).
+  → **스왑 I/O를 지연/감소**(공간 효율↑, CPU 소모는 있음).
+  *(macOS compressed memory, Linux zram/zswap 등)*
+
+> **중요 구분**
+>
+> * **Modified List** = *Dirty 페이지의 쓰기 대기열* (언젠가 디스크로 감)
+> * **Compressed List** = *스왑 회피를 위한 RAM 내 압축 저장* (디스크로 안 감)
+
+---
+
+## ⏱️ 성능 모델(EAT)
+
+* **EAT = (1 - p) × 메모리 접근시간 + p × (Fault 서비스 시간)**
+* 예) 메모리 200ns, Page Fault 8ms(=8,000,000ns):
+  `EAT = 200 + p × 7,999,800(ns)` → **p**에 민감
+
+---
+
+## 🧰 최적화 포인트
+
+* **Swap 공간**: 파일시스템 I/O보다 **swap 공간** 접근이 일반적으로 빠름.
+* **익명 메모리**: 실행 중 생성되는 **anonymous memory**는 swap 사용.
+* **COW**: fork 후 페이지 복사 대신 **공유 + 최초 쓰기 시 복사**로 최적화.
+
+  > ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/8752976b-b1e2-4785-a896-eb8a0e3b4cba)
+  > ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/ceb26f4e-6d4a-4c76-b119-7a5cceee0f89)
+
+---
+
+## 🔄 페이지 교체(Replacement)
+
+* **왜 필요?** 프레임이 가득 찼는데 새 페이지를 올려야 할 때 **희생 페이지(victim)** 선택.
+* 흐름: victim 선정 → **Dirty면 write-back** → PTE/TLB 갱신 → 재시작
+* **Local vs Global 교체**: 자기 프레임에서만/전체에서 교체(장단점 존재)
+* **Dirty bit** 고려: 가능한 **clean 페이지 우선** 희생 → I/O 절감
+
+---
+
+## 📈 레퍼런스 스트링 & 알고리즘 평가
+
+* **Reference String**: 페이지 접근 순서열 → 알고리즘 성능 분석에 사용
+  ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/218a5d23-4396-4c1d-89c6-f20debcbc8d3)
+
+### 대표 알고리즘
+
+1. **FIFO**: 먼저 들어온 페이지부터 교체(단순, **Belady’s anomaly** 발생 가능)
+   ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7c6b5223-f750-4c1e-8d68-fb70474ee00d)
+
+2. **Optimal(MIN)**: **미래에 가장 늦게** 사용될 페이지 교체(이론적 최적, 구현 불가)
+   ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/7a86c852-e356-4902-b9aa-436b6fa5f244)
+
+3. **LRU**: **가장 오래전에 사용된** 페이지 교체(현실적·성능 우수, 구현 비용↑)
+   ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/67d4362d-9962-4113-b6af-77e939e33e40)
+
+4. **LRU 근사(Reference-bit 계열)**
+
+   * **Second Chance(Clock)**: R=1이면 기회 부여 후 0으로 리셋, R=0이면 교체
+     ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/05fbbb3a-0055-4e3c-9a95-69c25a294390)
+   * **Enhanced Second Chance**: (R, Dirty)까지 고려 → (0,0) 우선
+     ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/cb5f68aa-d3ef-4ef4-8c24-e7650a0651e4)
+   * **Additional Reference Bits**: 주기적으로 비트 쉬프트로 과거 사용 흔적 기록
+     ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/e6194507-cf39-4004-a733-fcc46459aa5c)
+
+> **LRU/OPT는 Stack Algorithm** → **Belady’s anomaly 없음**
+> ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/b56d945d-58cf-4c7e-a19b-1e0f64022a0d)
+
+**Counting 계열(LFU/MFU)**: 빈도 기반(구현 비용↑, OPT 근접성↓)
+**Page-Buffering**: 소규모 풀로 즉시 대체/복구, I/O 중첩(병행) 가능
+
+---
+
+## 🧮 프레임 할당
+
+* **Equal/Proportional/Priority 할당**
+  ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/bc151598-7aa0-4859-bf50-8b327d25ae1a)
+* **Global vs Local**: 전체/자기 것 중 교체 선택
+
+**Reclaiming**: Free frame 임계치 도달 시 **선제 교체**
+![image](https://github.com/purekm/Today-I-Learned/assets/90774046/3b14a8a6-540a-4668-8935-582de97dc83c)
+
+---
+
+## 🧭 NUMA
+
+* 노드 간 메모리 접근 지연이 **비균일(Non-Uniform)**
+  ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/e42c8863-5638-4438-b3ba-a2a4928ebd9e)
+
+---
+
+## 🔥 스래싱(Thrashing)
+
+* **Page Fault 폭증** → 페이징에 시간 대부분 소비 → **CPU 활용도 급락**
+* OS가 “I/O가 한가하네? 더 태워!” 오판 시 악화
+
+### 대책
+
+* **Locality 모델**: 시간/공간 지역성 활용
+  ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/f07c275d-8d57-4bee-ad65-52c3a4e8acb4)
+* **Working Set 모델**: 최근 윈도우 내 참조 페이지 집합(W) 유지, `D > m`이면 스래싱
+* **Page-Fault Frequency(PFF)**: 폴트율 기반으로 동적 프레임 증감(로컬 정책)
+
+---
+
+## 🧱 커널 메모리 할당자
+
+* **Buddy System**: 큰 블록을 2의 거듭제곱으로 쪼개 사용 후 병합
+* **Slab Allocator**: 커널 오브젝트 크기에 맞춘 **슬랩 캐시**로 빠르고 파편화↓
+  ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/6f3f50aa-d3d4-486c-8c25-cd11bf288962)
+
+---
+
+## 🧯 기타 주제
+
+* **Pre-paging**: 데이터 파일 등 **예측 가능한 접근**엔 선적재가 유효.
+* **페이지 크기**: 작을수록 **내부 단편화↓**, 하지만 **TLB 효율**과 트레이드오프
+  ![image](https://github.com/purekm/Today-I-Learned/assets/90774046/48382a01-10d8-4e8d-a75d-026c6914a51a)
+* **TLB Reach = (TLB 엔트리 수 × 페이지 크기)**: 클수록 좋음.
+* **I/O interlock**: I/O 버퍼가 있는 페이지는 교체 금지(핀ning).
+* **OS별 프리페치**:
+
+  * Linux: LRU 계열 리스트(활성/비활성)로 **앞쪽이 자주 사용**
+  * Windows: **Clustering**(폴트 근처 앞뒤로 묶어 다수 선적재)
+
+---
+
+### 📌 기억하기 좋은 한 장 요약
+
+* **VM = 보호·효율·확장성**
+* **TLB → PT → Page Fault**
+* **Minor(Mem에 있음) vs Major(Disk I/O)**
+* **Modified = Dirty write-back 대기, Compressed = RAM 압축 저장**
+* **LRU~Clock(Second Chance)**, **Belady’s anomaly(FIFO)**
+* **Working Set / PFF로 스래싱 제어**
+
+---
 

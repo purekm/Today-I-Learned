@@ -1,8 +1,8 @@
-# 🧱 Pod와 Container 기본 개념
+# Pod와 Container 기본 개념
 
 ---
 
-## 📦 Pod란?
+## Pod란?
 
 - Kubernetes에서 **컨테이너는 Pod라는 캡슐로 포장**되어 실행됨
 - Pod는 애플리케이션의 **단일 인스턴스**이며, Kubernetes의 **가장 작은 배포 단위**
@@ -11,7 +11,7 @@
 
 ---
 
-## 📈 스케일링 전략
+## 스케일링 전략
 
 - 사용량 증가 시:
   - **Node에 여유가 있다면**, 동일 Node에 Pod를 추가
@@ -19,7 +19,7 @@
 
 ---
 
-## 🔁 Pod와 Container의 관계
+## Pod와 Container의 관계
 
 - 일반적으로 **Pod 1개에 Container 1개 (1:1 구조)**
 - 하지만 **Multi-Container Pod**도 존재함:
@@ -27,7 +27,7 @@
 
 ---
 
-## 📄 Kubernetes YAML의 주요 필드
+## Kubernetes YAML의 주요 필드
 
 Kubernetes는 리소스를 정의할 때 **YAML 파일**을 사용하며, 주요 필드는 다음과 같음:
 
@@ -38,7 +38,7 @@ Kubernetes는 리소스를 정의할 때 **YAML 파일**을 사용하며, 주요
 
 ---
 
-## 🔍 Pod 상태 확인 명령어
+## Pod 상태 확인 명령어
 
 - 현재 클러스터에 존재하는 Pod 목록 확인:
   ```bash

@@ -1,19 +1,19 @@
-# 🚪 kube-apiserver
+# kube-apiserver
 
 Kubernetes에서 kube-apiserver는 클러스터의 핵심 컴포넌트입니다.  
 모든 요청은 API를 통해 전달되며, kubectl 또한 이 API를 활용합니다.
 
 ---
 
-## 🧩 역할
+## 역할
 
-- Kubernetes의 모든 리소스 객체 간 통신은 API를 통해 수행됨  
+- Kubernetes의 컴포넌트 간 통신은 API를 통해 수행됨  
 - 사용자는 kubectl을 통해 명령을 실행하며, HTTP POST 방식으로 직접 API 요청도 가능  
 - kube-apiserver는 ETCD와 직접 통신하여 상태 데이터를 저장하거나 불러옴
 
 ---
 
-## 📦 Pod 생성 흐름
+## Pod 생성 흐름
 
 1. **Authenticate User**  
    요청을 보낸 사용자의 신원을 인증
@@ -38,7 +38,7 @@ Kubernetes에서 kube-apiserver는 클러스터의 핵심 컴포넌트입니다.
 
 ---
 
-## 🧭 핵심 요약
+##  핵심 요약
 
 - 클러스터를 변경하는 모든 작업은 kube-apiserver를 통해 수행됨
 - kube-apiserver는 ETCD와 직접 연결되어 클러스터 상태를 실시간 반영

@@ -53,15 +53,24 @@
 - 클라이언트나 서버 둘다 답장을 받지 못하면 retransmit을 하는데, 시퀀스넘버가 있어서 중복으로 보내도 꼬이지 않고 첫번째로 오는 걸로 연결을 만들고 이후 중복된 답장이 오면 무시함
 
 # Connection Termination(4way hand-shake)
-- X sends FIN to Y (active close)
-- Y ACKs the FIN
-- and Y sends a FIN to X (passive close)
-- X Acks the FIN
+1. X sends FIN to Y (active close)
+2. Y ACKs the FIN
+3. and Y sends a FIN to X (passive close)
+4. X Acks the FIN
 - ![alt text](image-5.png)
-- 마지막까지 끝내면 완전히 closed
-- 만약 마지막 ACK가 timeout이 되면, B는 FIN을 다시 보냄
-- 모든 바이트가 ACK 응답을 받기 전에 FIN을 보낼 순 있지만, FIN이 ACK되기 전에는 연결 종료를 할 수 없음
+- 마지막까지 ACK를 보내면 Time_wait(2MSL) 이후 완전히 closed
 
+왜 2MSL 만큼 Time_wait을 하는가?
+
+MSL은 패킷이 살아있을 수 있는 시간인데, 2MSL은  내가 보낸 패킷과 상대 패킷이 살아있을 수 있는 시간
+- 지연패킷때문에 새롭게 연결이 생길 수 있으니, 지연패킷 제거
+- 마지막 ACK가 손실 되면 서버가 FIN을 재전송하기 때문
+
+
+만약 마지막 ACK가 timeout이 되면, B는 FIN을 다시 보냄
+- 모든 바이트가 ACK 응답을 받기 전에 FIN을 보낼 순 있지만, FIN이 ACK되기 전에는 연결 종료를 할 수 없음
+- 클라이언트가 FIN을 보내고 나서 ACK를 받으면 클라이언트는 못 보내지만, 서버가 보내는 걸 들을 수 있음
+-
 # Abrupt Termination
 - ![alt text](image-6.png)
 - A가 B에게 RST를 보냄으로써 비정상적인 연결을 종료하고 싶음
@@ -93,9 +102,10 @@
 # Congestion Control
 - 네트워크 혼잡 보호를 위해 보내는 사람이 속도 조절 
 - Tahoe, Reno
-- 처음엔 둘다 2배씩 증가하다가, ssthresh 도달 후 서형 증가
+- 처음엔 둘다 2배씩 증가하다가, ssthresh 도달 후 선형 증가
 - Tahoe는 (Timeout, Fast retransmission)의 경우에 둘 다 임계값/2, 윈도우 사이즈 = 1
 - Reno는 Fast retransmission의 경우에는 임계값/2, 윈도우 사이즈 = 임계값, Timeout의 경우엔 임계값/2, 윈도우 사이즈 = 1
 
 흐름제어와 혼잡제어의 차이
 -> 흐름제어는 수신자가 버퍼 여유를 알려줌으로써 윈도우 사이즈를 조절하는 것이고, 혼잡제어는 네트워크 신호를 보고 송신자가 스스로 윈도우 사이즈 조절하는 것
+

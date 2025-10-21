@@ -12,15 +12,16 @@
 
 | OSI 7계층         | TCP/IP 계층(4/5계층 관점)                | 핵심 기능/포인트                                       | 대표 예시                                                  |
 |-------------------|------------------------------------------|--------------------------------------------------------|-----------------------------------------------------------|
-| 7. Application    | Application                              | 애플리케이션별 프로토콜(요청/응답 의미, 포맷)          | HTTP/HTTPS, DNS, SMTP, FTP, SSH, RTP, QUIC(전송 포함)     |
-| 6. Presentation   | (응용 계층 안/위에서 구현되는 경우 많음) | 데이터 표현/변환, 직렬화, 압축, **암호화**             | TLS(암호화), JSON/Protobuf, MIME, 문자/코드 변환          |
-| 5. Session        | (응용/라이브러리/프레임워크)             | 세션 관리, 동기화, 체크포인트/복구                     | TLS 세션, gRPC 세션, RTSP 세션                            |
-| 4. Transport      | Transport                                 | 종단 간 전달, 연결 관리, 오류/흐름/혼잡 제어(프로토콜별 상이) | **TCP**(연결·신뢰성), **UDP**(비연결) |
+| 7. Application    | Application                              | 애플리케이션 별 프로토콜(요청/응답 의미, 포맷)          | HTTP/HTTPS, DNS, SMTP, FTP    |
+| 6. Presentation   | (응용 계층 안/위에서 구현되는 경우 많음) |메시지 포맷 관리(인코딩, 암호화, 압축)             | TLS, JSON/Protobuf, unicode          |
+| 5. Session        | (응용/라이브러리/프레임워크)             | 세션 관리 및 송수신측간 대화 순서 제어 유지                      | RPC(클라이언트와 서버의 세션을 설정하여 원격 프로시저 호출)                            |
+| 4. Transport      | Transport                                 | 종단 간 전달, 연결 관리, 오류/흐름/혼잡 제어 | **TCP**(연결·신뢰성), **UDP**(비연결) |
 | 3. Network        | Internet                                  | **호스트 간** 패킷 전달, 라우팅, 주소 지정             | **IP**(IPv4/IPv6), ICMP                 |
 | 2. Data Link      | Link                                      | **링크(이웃 노드)** 프레이밍, 매체 접근 제어, 오류 검출 | **이더넷**(MAC), Wi-Fi(802.11), PPP, ARP*                 |
 | 1. Physical       | Physical (TCP/IP 설명에선 Link에 포함되기도) | 비트 전송(전기/광/무선), 커넥터/주파수/부호화          | UTP, 광섬유, RF, 1000BASE-T, OFDM                         |
 
 \* ARP는 흔히 2.5계층(링크와 네트워크 사이)로 설명됩니다.
+
 
 ## Interface 
 - **interface** 는 네트워크에서 통신을 가능하게 하는 장치 또는 layer 간의 연결 점. OS에서는 기본적으로 여러 interface에 대한 protocol rules 을 가지고 있음. interface(Ethernet에서 접속하는 protocol과 wifi protocol)가 다르니까 그걸 OS가 조절 

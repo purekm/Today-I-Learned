@@ -35,6 +35,7 @@ Kube API Server와 통신하여 상태를 확인하고, 애플리케이션이 �
 ## 🔁 복제 Controller (Replica Controller)
 
 - Pod가 죽으면 자동으로 새로운 Pod를 생성하여 개수를 유지
+- ReplicaSet의 레거시 버전으로, 지금은 굳이 생각할 필요 없을 것 같음
 
 ---
 
