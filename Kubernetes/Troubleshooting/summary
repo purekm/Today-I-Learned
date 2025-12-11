@@ -1,0 +1,27 @@
+Pod
+- Pending: 아직 노드에 할당되기 전으로, 리소스 및 스케줄 조건 확인
+- Wating: 노드에 할당됐지만 컨테이너가 실행되지 않는 상태로, 이미지 확인
+- Terminating: 삭제를 했지만 종료되지 않는 상태로, admission webhook 의심
+- Running: 스펙 확인
+
+Service
+Endpoint부터 확인.
+만약 엔드포인트가 없으면, Selector와 label이 일치하지 않거나 port가 일치하지 않는 것
+
+Cluster(node, controlplane, network, etcd)
+먼저 노드 상태부터 Ready인지 확인
+
+Not Ready라면 taints, conditions, events, kubelet 상태 확인
+
+조금 더 깊게 보려면 로그 확인
+journalctl로 확인 가능
+
+| 대상            | 주요 문제 유형                                | 핵심 트러블슈팅 포인트                                  |
+| ------------- | --------------------------------------- | --------------------------------------------- |
+| Pod           | Pending / Waiting / Terminating / 동작 오류 | describe, 이벤트, 이미지 풀, YAML 오타, webhook, probe |
+| Deployment    | Pod 생성 실패                               | describe, Pod 트러블슈팅으로 연결                      |
+| Service       | 트래픽 전달되지 않음                             | EndpointSlice, selector-label, port 매핑        |
+| Node          | NotReady / Unknown                      | node describe, kubelet 로그, node 조건            |
+| Control Plane | apiserver/scheduler/controller 장애       | 로그 분석, etcd 상태 확인                             |
+| Cluster       | 네트워크/스토리지/VM 장애                         | cluster-info dump, HA 구성, 백업                  |
+

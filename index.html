@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>DynamoDB 목록</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body{font-family:system-ui;margin:24px}
+    .card{border:1px solid #ddd;padding:12px;margin:8px 0;border-radius:8px}
+    .muted{color:#666}
+  </style>
+</head>
+<body>
+  <h1>사용자 목록</h1>
+  <div class="muted">
+    API: <a href="https://e9yxw91n4k.execute-api.ap-northeast-2.amazonaws.com/dev/users" target="_blank">
+      https://e9yxw91n4k.execute-api.ap-northeast-2.amazonaws.com/dev/users
+    </a>
+  </div>
+  <div id="list">불러오는 중…</div>
+
+  <script>
+    // ✅ API Gateway 엔드포인트
+    const API_BASE = "https://e9yxw91n4k.execute-api.ap-northeast-2.amazonaws.com/dev";
+    const USERS_API = `${API_BASE}/users`;
+
+    // ✅ 전체 목록 조회
+    async function loadUsers() {
+      const root = document.getElementById("list");
+      try {
+        const res = await fetch(USERS_API, { method: "GET" });
+        if (!res.ok) throw new Error(`API 응답 오류: ${res.status}`);
+
+        // JSON 파싱
+        const data = await res.json();
+        console.log("API 응답:", data);
+
+        root.innerHTML = "";
+        if (!data.users || data.users.length === 0) {
+          root.textContent = "데이터가 없습니다.";
+          return;
+        }
+
+        // ✅ 사용자 카드 렌더링
+        data.users.forEach(u => {
+          const el = document.createElement("div");
+          el.className = "card";
+          el.innerHTML = `
+            <strong>${u.name ?? "(이름없음)"}</strong><br>
+            id: ${u.id}<br>
+            email: ${u.email ?? "-"}<br>
+            ${u.department ? `department: ${u.department}<br>` : ""}
+            ${u.price ? `price: ${u.price}<br>` : ""}
+          `;
+          root.appendChild(el);
+        });
+      } catch (e) {
+        root.textContent = "로딩 실패: " + e.message;
+        console.error("fetch 에러:", e);
+      }
+    }
+
+    // ✅ 단건 조회 예시
+    async function loadUser(id) {
+      const url = `${USERS_API}/${encodeURIComponent(id)}?profileType=basic`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`API 오류: ${res.status}`);
+        const data = await res.json();
+        console.log("단건 조회:", data.user);
+      } catch (e) {
+        console.error("단건 조회 실패:", e);
+      }
+    }
+
+    // 페이지 로드 시 자동 실행
+    loadUsers();
+  </script>
+</body>
+</html>

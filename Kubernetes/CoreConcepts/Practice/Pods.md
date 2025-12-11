@@ -1,9 +1,9 @@
 ````markdown
-# 📘 Kubernetes Pod 명령어 & 실습 예시 정리
+#  Kubernetes Pod 명령어 & 실습 예시 정리
 
 ---
 
-## 📌 1. 모든 Pod 목록 확인
+## 1. 모든 Pod 목록 확인
 
 ```bash
 kubectl get pods
@@ -13,7 +13,7 @@ kubectl get pods
 
 ---
 
-## 📥 2. 이미지로 Pod 생성
+## 2. 이미지로 Pod 생성
 
 ```bash
 kubectl run <pod-name> --image=<image-name>
@@ -29,7 +29,7 @@ kubectl run nginx --image=nginx
 
 ---
 
-## 🔎 3. 특정 이름/라벨/노드에 있는 Pod 찾기
+## 3. 특정 이름/라벨/노드에 있는 Pod 찾기
 
 * Label: `busybox`
 * Node: `controlplane`
@@ -44,7 +44,7 @@ kubectl get pods --selector run=busybox -o wide
 
 ---
 
-## 📦 4. 컨테이너 수 및 사용된 이미지 확인
+## 4. 컨테이너 수 및 사용된 이미지 확인
 
 * Container 수: 2개
 * 사용된 이미지: `nginx`, `agentx`
@@ -59,7 +59,7 @@ kubectl describe pod <pod-name>
 
 ---
 
-## ❌ 5. Pod 삭제
+## 5. Pod 삭제
 
 ```bash
 kubectl delete pod <pod-name>
@@ -69,7 +69,7 @@ kubectl delete pod <pod-name>
 
 ---
 
-## ➕ 6. redis123 이미지를 사용한 redis Pod 생성
+## 6. redis123 이미지를 사용한 redis Pod 생성
 
 ```bash
 kubectl run redis --image=redis123
@@ -79,7 +79,7 @@ kubectl run redis --image=redis123
 
 ---
 
-## 🛠 7. Pod 수정
+## 7. Pod 수정
 
 ```bash
 kubectl edit pod <pod-name>
