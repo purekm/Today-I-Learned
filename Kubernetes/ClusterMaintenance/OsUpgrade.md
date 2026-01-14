@@ -1,102 +1,284 @@
-OS upgrade
-Node의 OS나 커널을 업그레이드 하려면 Node를 재부팅하거나 중지시켜야함
-=> 이때 pod가 영향받지 않기 위해서 drain/ uncordon 명령어 사용
-- kubectl drain: 노드를 유지보수 모드로 전환하고, 그 노드에서 실행 중인 pod를 다른 노드로 옮기기
+````md
+# OS Upgrade, Cluster Upgrade, etcd 백업/복원 정리
 
-내부적으로 일어나는 일
-노드가 Cordon 되어 스케줄 불가 처리됨.
-노드에 있던 Pod들이 Eviction API 를 통해 순서대로 종료됨.
-ReplicationController, ReplicaSet, Deployment가 새 Pod을 다른 노드에 자동 생성.
-모든 일반 Pod이 사라지면, Node가 비워진 상태가 됨.
+---
 
-Lab
+## 1. OS Upgrade (Node 유지보수)
 
-Drain 후 node가 비워지면 OS를 업그레이드하고,
-이후에 다시 노드가 스케줄링 가능하게 하도록 uncordon 명령어 사용
-cordon 명령어는 해당 노드를 스케줄링 못하게 만드는데, drain과는 다르게 방출시키지 않음
+Node의 **OS/커널 업그레이드**를 하려면 보통 **재부팅 또는 서비스 중지**가 필요하다.  
+이때 해당 Node에 있던 Pod가 가능한 한 영향을 받지 않도록, `drain` / `cordon` / `uncordon`을 사용한다.
 
-노드를 강제로 drain 했을 때, ReplicaSet에 속하지 않은 Pod들은 삭제됨
+### 1.1 drain / cordon / uncordon 개념
+
+- `kubectl drain <노드명>`  
+  - 노드를 **유지보수 모드**로 전환하고,  
+    그 노드에서 실행 중인 Pod를 다른 노드로 옮길 수 있게 만든다.
+
+내부적으로 일어나는 일:
+
+1. 노드가 **Cordon** 상태가 되어 **스케줄 불가(Unschedulable)** 처리됨.
+2. 노드에 있던 일반 Pod들이 **Eviction API**를 통해 순서대로 종료됨.
+3. 그 Pod들을 관리하는  
+   `ReplicationController`, `ReplicaSet`, `Deployment`, `StatefulSet` 등이  
+   **다른 노드에 새 Pod를 자동 생성**.
+4. 모든 일반 Pod가 사라지면, 해당 Node는 **비워진 상태**가 됨.
+
+- `kubectl cordon <노드명>`
+  - 해당 노드를 **스케줄 불가** 상태로 만들어  
+    **새 Pod는 더 이상 스케줄링되지 않게** 한다.
+  - 이미 떠 있는 Pod는 그대로 유지되며 “퇴거(evict)” 되지 않는다.
+
+- `kubectl uncordon <노드명>`
+  - 유지보수 후 노드를 다시 **스케줄 가능 상태**로 되돌린다.
+
+### 1.2 OS 업그레이드 절차 예시
+
+1. 노드를 drain:
+   ```bash
+   kubectl drain <노드명> --ignore-daemonsets --delete-emptydir-data
+````
+
+2. OS/커널 업그레이드 및 재부팅.
+3. 노드가 다시 Ready 상태가 되면:
+
+   ```bash
+   kubectl uncordon <노드명>
+   ```
+
+### 1.3 강제 drain 시 주의사항
+
+* 노드를 **강제로 drain** 했을 때(`--force` 사용 등),
+
+  * **ReplicaSet/Deployment에 속하지 않은 Pod**(고아 Pod)들은 **삭제**되며,
+  * 다시 자동 생성되지 않을 수 있다.
+* 따라서 중요한 Pod는 항상 Deployment/StatefulSet 등 **컨트롤러로 관리**하는 것이 좋다.
+
+---
+
+## 2. Cluster Upgrade
+
+### 2.1 컴포넌트 버전 관계 (Version Skew)
+
+모든 컴포넌트가 **완전히 같은 버전일 필요는 없다.**
+다만 **kube-apiserver보다 더 높은 버전의 컴포넌트가 먼저 올라가면 안 된다**는 원칙이 있다.
+
+일반적인 업그레이드 순서(논리적):
+
+1. `kube-apiserver`
+2. `kube-controller-manager` & `kube-scheduler`
+3. `kubelet` & `kube-proxy`
+
+* 상위 컴포넌트(특히 API Server)와 **같은 버전이거나, 그보다 낮은 버전**으로 맞추되
+* **하위 컴포넌트를 API Server보다 더 높은 버전으로 먼저 올리는 것은 피한다.**
+
+### 2.2 지원 버전 및 업그레이드 단계
+
+* Kubernetes는 공식적으로 **최신 3개의 minor 버전**만 지원.
+* 업그레이드는 **한 minor 버전씩** 올리는 것이 권장된다.
+
+  * 예: `1.10 → 1.11 → 1.12`
+
+### 2.3 클러스터별 업그레이드 방식
+
+* **GKE/Cloud Managed Kubernetes**
+
+  * 보통 Cloud 콘솔/CLI에서 제공하는 업그레이드 기능 사용
+* **kubeadm 기반 클러스터**
+
+  * `kubeadm upgrade` 명령어 사용
+
+### 2.4 업그레이드 전략
+
+1. **Master(Control Plane) Node 업그레이드**
+2. Control Plane이 안정화된 후, **Worker Node 업그레이드**
+
+Worker Node 업그레이드 전략 예:
+
+* 모든 Worker Node를 한 번에 교체
+  → 다운타임 발생 가능 (보통 권장 X)
+* Worker Node를 **하나씩 순차적으로**
+  `drain → 업그레이드 → uncordon`
+* 아예 **새 버전 노드를 새로 생성**하고
+  기존 노드를 워크로드 이동 후 폐기하는 방식
+
+---
+
+## 3. kubeadm으로 업그레이드할 때의 상세 흐름
+
+### 3.1 Control Plane 업그레이드
+
+1. **먼저 저장소 정보 및 패키지 버전 확인**
+
+   ```bash
+   sudo apt update
+   sudo apt-cache madison kubeadm
+   ```
+
+2. **kubeadm 패키지 업그레이드**
+
+   ```bash
+   sudo apt-get install -y kubeadm=1.12.0-00
+   ```
+
+3. **업그레이드 계획 확인 및 실행**
+
+   ```bash
+   sudo kubeadm upgrade plan
+   sudo kubeadm upgrade apply v1.12.0
+   ```
+
+> 여기까지 해도 `kubectl get nodes`에 표시되는 노드 버전은 그대로일 수 있다.
+> 노드 버전은 **kubelet 버전 기준**이기 때문.
+
+4. **kubelet 업그레이드**
+
+   ```bash
+   sudo apt-get install -y kubelet=1.12.0-00
+   sudo systemctl restart kubelet
+   ```
+
+5. 이후 `kubectl get nodes`로 확인하면
+   Control Plane 노드의 버전이 새 버전으로 보이게 된다.
+
+### 3.2 Worker Node 업그레이드
+
+각 Worker 노드에 대해 같은 패턴 수행:
+
+1. 해당 노드를 drain:
+
+   ```bash
+   kubectl drain <worker-node> --ignore-daemonsets --delete-emptydir-data
+   ```
+2. 해당 노드에서:
+
+   ```bash
+   sudo apt update
+   sudo apt-cache madison kubeadm
+   sudo apt-get install -y kubeadm=<버전>
+   sudo kubeadm upgrade node     # worker 노드용
+   sudo apt-get install -y kubelet=<버전>
+   sudo systemctl restart kubelet
+   ```
+3. 다시 스케줄 가능하게:
+
+   ```bash
+   kubectl uncordon <worker-node>
+   ```
+
+### 3.3 OS 버전 확인
+
+* 노드 OS 버전 확인:
+
+  ```bash
+  cat /etc/*release*
+  ```
+
+---
+
+## 4. etcd 백업과 복구
+
+### 4.1 etcd data-dir와 스냅샷
+
+* **data-dir**
+
+  * etcd 데이터(클러스터 상태)가 저장되는 디렉터리
+  * 일반적으로 `/var/lib/etcd`
+* etcd는 **스냅샷(snapshot)** 생성 기능 제공
+
+  * 스냅샷 파일은 보통 `.db` 확장자로 현재 디렉토리(또는 지정 디렉토리)에 생성
+
+### 4.2 TLS 인증 옵션 의미 (etcdctl 사용 전 준비)
+
+`etcdctl`로 접속할 때는 TLS 인증 설정이 필요하다:
+
+* `--cacert`
+
+  * 서버에서 보내준 인증서를 검증하기 위한 **CA 인증서**
+* `--cert`
+
+  * 클라이언트(우리가) 서버에 보낼 **클라이언트 인증서**
+* `--key`
+
+  * 위 인증서에 대응하는 **개인 키**
+* `--endpoints`
+
+  * 접속할 etcd 서버 주소 (예: `https://127.0.0.1:2379`)
+
+### 4.3 스냅샷 생성 (온라인 백업, etcdctl)
+
+```bash
+ETCDCTL_API=3 etcdctl \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key \
+  snapshot save /backup/etcd-snapshot.db
+```
+
+* 실행 시점의 etcd 데이터를 `.db` 파일로 저장.
+* 스냅샷 상태 조회:
+
+  ```bash
+  ETCDCTL_API=3 etcdctl snapshot status /backup/etcd-snapshot.db
+  ```
+
+### 4.4 스냅샷 복구 절차 (restore)
+
+1. **kube-apiserver 중지**
+
+   * static Pod 환경이면 `/etc/kubernetes/manifests/kube-apiserver.yaml`를 잠시 다른 위치로 옮겨서 정지시킬 수 있음.
+
+2. **스냅샷 복원 (새 data-dir 사용)**
+
+   ```bash
+   ETCDCTL_API=3 etcdctl \
+     --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+     --cert=/etc/kubernetes/pki/etcd/server.crt \
+     --key=/etc/kubernetes/pki/etcd/server.key \
+     snapshot restore /backup/etcd-snapshot.db \
+     --data-dir=/var/lib/etcd-restored
+   ```
+
+3. **새 data-dir을 사용하도록 etcd 설정 변경**
+
+   * `/etc/kubernetes/manifests/etcd.yaml`에서
+     `--data-dir=/var/lib/etcd-restored` 로 수정
+
+4. **systemd 재로딩 및 서비스 재시작 (필요 시)**
+
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl restart etcd
+   # 이후 kube-apiserver static manifest 되돌려 재시작
+   ```
+
+5. 클러스터 상태 확인:
+
+   ```bash
+   kubectl get nodes
+   kubectl get pods -A
+   ```
+
+## 5. Lab 팁 요약
+node를 drain 할때, deployment가 아니라 그냥 pod는 force drain을 하면 삭제됨
 
 
-Cluster upgrade
-모든 컴포넌트들이 같은 버전을 사용할 필요는 없음
-=> But kube api서버 보다 더 높은 버전을 사용하는 것은 안됌
-1️⃣ kube-apiserver  →  2️⃣ controller-manager & scheduler  →  3️⃣ kubelet & kube-proxy 
-같아도 되지만, 하위의 컴포넌트가 더 높은 버전을 사용하면 안됌
+* **controlplane이 접속하는 etcd endpoint 찾기**
 
-버전은 업그레이드 시킬 수 있음
-쿠버네티스는 최신 3개의 버전만을 지원함
-업그레이드할때는 한 단계씩 올리는 게 좋음 (ex 1.10 -> 1.11)
+  * etcd Pod의 설정(예: `/etc/kubernetes/manifests/etcd.yaml`)에서
+    `--listen-client-urls` / `--advertise-client-urls` 확인.
 
-클러스터마다 업그레이드하는 방식이 다름
-- Google 클러스터: console 조작
-- Kubeadm: kubeadm upgrade 명령어 사용
+* **etcd snapshot 생성 시 기억해야 할 4가지 요소**
 
-클러스터를 업그레이드하는 방식
-1. Master Node 업그레이드
-2. Master Node 업그레이드되는 동안 Worker Node 업그레이드
-Worker Node를 업그레이드하는 여러 전략이 있음
-- 모든 노드를 한번에 교체(다운타임 발생)
-- 한번에 노드 1개씩 업그레이드(모든 노드를 최신 버전으로 업그레이드 할때까지 동일한 절차)
-- 새로운 버전의 노드를 생성하고, 기존의 노드 폐기
+  1. `--endpoints`
+  2. `--cacert`
+  3. `--cert`
+  4. `--key`
 
-kubeadm을 통해 클러스터를 업그레이드하는데, controlplane 요소 업그레이드 한 이후에는 kubelet은 수동으로 업그레이드 해야함
-먼저 kubeadm 업그레이드
-=> apt-get upgrade -y kubeadm=1.12.0-00
-=> kubeadm upgrade apply v1.12.0
+* **snapshot 복원 후 주의점**
 
-위를 통해 클러스터를 업그레이드해도, get node를 했을 때 노드들의 버전은 똑같음
-=> kubelet의 버전이 나오는 것이기 때문에 이는 수동으로 업그레이드 해줘야함
+  * `--data-dir`를 **새 디렉토리**로 지정해서 복원한 다음,
+  * etcd 설정 파일(예: `etcd.yaml`)에서 data-dir 경로를 **복원된 경로**로 변경해야
+    실제로 복원된 데이터가 사용된다.
 
-apt-get upgrade -y kubelet=1.12.0-00으로 kubelet 버전 설치 후,
-systemctl restart kubelets로 재실행
-이후 확인해보면 master node의 버전이 upgrade된 것을 확인할 수 있음
-이때부터 worker node 업그레이드 시작
-1번 node를 업그레이드하면, 해당 워크로드들은 다른 노드들에게 넘겨줘야함(drain)
-업그레이드 이후에는 uncordon 명령어로 unscheduling을 해제해줘야 함
 
-Demo: Upgrading Cluster
-/etc/*release* 에 사용하고 있는 버전이 나옴
-
-Lab
-Master Node Upgrade(Workder node upgrade)
-1. 먼저 저장소에 패키지 다운로드
-2. sudo apt update && sudo apt-cache madison kubeadm 를 통해 패키지 업데이트 및 저장소의 패키지 버전 출력
-3. kubeadm upgrade plan && kubeadm apply ~
-4. apt-get install 로 kubelet 설치
-5. 재시작 
-
-Master node는 apply, worker node는 upgrade node를 사용
-
-Backing up and Restore Method
-etcd의 data-dir: 모든 데이터가 저장되는 곳
-etcd는 snapshot 생성도 가능(생성시 현재 디렉토리에 생성)
-
-Restore 절차
-1. kube-apiserver stop
-2. etcdctl snapshot restore ~ /복원 디렉토리 를 통해 스냅샷으로 복원
-3. systemctl daemon-reload && restart etcd && kube-apiserver
-
-etcdctl을 사용하기 전에 TLS인증이 필요한데, 이를 위해 옵션들을 작성해두면 TLS 인증을 해줌
-- cacert : 상대방이 인증서를 주면 ca의 공개키로 확인하기 위함 
-- server.crt : 상대방에게 보낼 인증서
-- server.key : 내 개인 키인데, 상대방에게 보낼 인증서에 서명하기 위함
-- 엔드포인트 : 
-
-| 구분         | etcdctl                                                | etcdutl                          |
-| ---------- | ------------------------------------------------------ | -------------------------------- |
-| 백업 방식      | **라이브(운영 중)** etcd에 API로 접근해 스냅샷 생성                    | **오프라인(정지 상태)** 에서 파일 시스템 복제     |
-| 결과물        | `.db` 스냅샷 파일                                           | etcd data-dir 복사본                |
-| etcd 실행 여부 | 실행 중이어야 함                                              | 종료 상태여야 안전함                      |
-| 주요 명령      | `snapshot save`, `snapshot status`, `snapshot restore` | `backup`, `snapshot restore`     |
-| 복구 방법      | `.db` 파일을 `snapshot restore`로 복구                       | 백업 디렉터리를 `/var/lib/etcd`에 그대로 복사 |
-| 사용 목적      | 운영 환경 백업, 빠른 복원 가능                                     | 오프라인 백업, 디스크 레벨 복사용              |
-
-Lab
-controlplane이 연결되어있는 etcd cluster에 접근할 수 있는 주소 찾기
-=> etcd pod에서 listen-client-url 찾기
-
-etcd snapshot 생성할 때, 4가지 요소 잘 적어두기
-
-etcd snapshot 복원할 때, --data-dir을 통해서 원래 주소가 아닌 새로운 주소로 복원하도록 작성해줌
-이후 /etc/kubernetes/manifest 에서 정적파일인 etcd.yaml 수정하는데, data-dir을 내가 복원한 주소로 수정해야 복원됨

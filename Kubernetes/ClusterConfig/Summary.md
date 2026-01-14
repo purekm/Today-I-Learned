@@ -126,7 +126,7 @@ Overlay
 Base와 patch를 조합하여 환경별로 다른 설정을 적용하는 방법
 예: dev, stage, prod 환경별로 다른 설정을 적용하고 싶을 때
 base: ../../base
-patche: |-
+patch: |-
   - op: replace
     path: /spec/replicas
     value: 2

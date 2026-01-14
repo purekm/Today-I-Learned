@@ -16,7 +16,7 @@ Deployment는 **Pod를 관리하는 오브젝트**로,
 
 ## Deployment의 주요 역할
 
-1. **Pod 개수 유지 (Self-Healing)**
+1. **Pod 개수 유지**
 
    * 정의된 `replicas` 수를 항상 보장한다.
    * Pod가 비정상 종료되면 자동으로 새로운 Pod를 생성한다.

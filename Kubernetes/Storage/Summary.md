@@ -62,7 +62,7 @@ Container Layer는 **휘발성**입니다.
 | 종류                              | 설명                                      |
 | ------------------------------- | --------------------------------------- |
 | **emptyDir**                    | Pod가 삭제되면 함께 삭제되는 임시 디렉터리 제공            |
-| **configMap**                   | 설정 파일 등 구성 데이터를 저장                      |
+| **configMap**                   | 설정 파일 등 구성 데이터를 파일 형태로 마운트                      |
 | **persistentVolumeClaim (PVC)** | 요청된 조건에 맞는 Persistent Volume(PV)을 찾아 연결 |
 | **hostPath**                    | 노드의 실제 디렉터리를 그대로 Pod에 마운트 (공유 폴더 느낌)    |
 
@@ -91,7 +91,7 @@ Kubernetes와 스토리지 드라이버 간의 통신 규칙을 정의한 **표�
 
 1. **CreateVolume**
 
-   * Pod가 PVC를 요청하면, Kubernetes가 Storage Driver에 RPC 호출하여 볼륨 생성 요청
+   * PVC가 생성되면 Storage Driver에 RPC 호출하여 볼륨 생성 요청
    * RPC를 사용하는 이유: 스토리지 벤더마다 API가 다르기 때문
 2. **DeleteVolume**
 3. **ControllerPublishVolume**

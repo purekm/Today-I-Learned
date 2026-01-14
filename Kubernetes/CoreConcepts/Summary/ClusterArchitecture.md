@@ -31,7 +31,7 @@
 실제 컨테이너(응용 프로그램)를 실행하는 노드
 
 * **Kubelet**: 노드 내에서 실행되는 에이전트, API Server의 지시를 받고 컨테이너 생성/제거
-* **Kube Proxy**: 노드 간 통신을 지원
+* **Kube Proxy**: 서비스에 온 트래픽을 실제 pod로 보내는 규칙을 노드에 깔아주는 역할 (iptables)
 * **Container Runtime Engine**: 컨테이너 실행 소프트웨어 (예: Docker)
 
 ---
