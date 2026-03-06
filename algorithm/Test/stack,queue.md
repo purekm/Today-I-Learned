@@ -31,3 +31,21 @@ def solution(progresses, speeds):
     return answer
 ## left_days에서 올림처리를 ceil로 하는 대신 트릭 추가. A//B 에서 올림처리가 힘드니까 A+(B-1) // B로 올림처리
 ## python 문법에 조금 더 익숙해지기
+
+## 문제 3번
+def solution(s):
+    answer = True
+    stack = []
+    for char in s:
+        if len(stack) == 0:
+            stack.append(char)
+            continue
+        if char==')':
+            stack.pop()
+        else:
+            stack.append(char)
+    if len(stack) != 0:
+        answer = False
+    
+    return answer
+## 흔한 괄호문제
