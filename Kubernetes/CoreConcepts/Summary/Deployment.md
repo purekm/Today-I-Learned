@@ -39,7 +39,7 @@ Deployment는 **Pod를 관리하는 오브젝트**로,
 
 ## Rolling Update란?
 
-Rolling Update는 **무중단 배포(Zero Downtime Deployment)**를 위한 기본 전략이다.
+Rolling Update는 **무중단 배포**를 위한 기본 전략이다.
 Pod를 한 번에 모두 교체하지 않고, 다음과 같은 순서로 점진적으로 교체한다.
 
 1. 기존 Pod 중 일부를 종료 (`maxUnavailable` 만큼)
