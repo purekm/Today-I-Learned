@@ -1,4 +1,4 @@
-````md
+
 # OS Upgrade, Cluster Upgrade, etcd 백업/복원 정리
 
 ---
@@ -36,7 +36,7 @@ Node의 **OS/커널 업그레이드**를 하려면 보통 **재부팅 또는 서
 1. 노드를 drain:
    ```bash
    kubectl drain <노드명> --ignore-daemonsets --delete-emptydir-data
-````
+
 
 2. OS/커널 업그레이드 및 재부팅.
 3. 노드가 다시 Ready 상태가 되면:
