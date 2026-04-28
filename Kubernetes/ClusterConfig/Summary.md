@@ -61,14 +61,21 @@ helm install: 차트 설치
 - helm install 릴리스이름 차트이름(repo name/chart name)
 
 Helm Lifecycle management
+
 helm history 릴리스이름: 릴리스 히스토리 확인
+
 helm rollback 릴리스이름 리비전번호: 특정 리비전으로 롤백 
+
 rollback시 모든 설정을 리비전 1의 상태로 되돌림, 기술적으로 리비전1로 되돌아가는 것은 아니고 새로운 리비전 3으로 생성됨
 
 Kustomize
+
 base와 overlay 개념
+
 base: 공통으로 사용할 리소스 정의
+
 overlay: 환경별로 덮어쓸 리소스 정의
+
 kustomization.yaml 파일에 리소스와 패치를 정의하는 형태로, 직접 YAML을 작성
 kustomization 파일에는 관리해야하는 리소스 목록과 패치 방법이 정의됨
 
